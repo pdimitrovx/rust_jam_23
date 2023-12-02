@@ -23,14 +23,15 @@ impl Santa {
 
     pub fn handle_input(&mut self) {
         if is_key_down(KeyCode::W) {
-            self.vel.y -= 1.0;
+            self.vel.y -= 10.0;
         }
 
         if is_key_down(KeyCode::S) {
-            self.vel.y += 1.0;
+            self.vel.y += 10.0;
         }
+        let mars_gravity = Vec2::new(0.0, 4.3);
 
-        self.vel += GRAVITY;
+        self.vel += mars_gravity;
         self.vel = self.vel.clamp_length_max(SANTA_MAX_SPEED);
         self.pos += self.vel * get_frame_time();
     }

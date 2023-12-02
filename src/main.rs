@@ -7,10 +7,10 @@ mod constants;
 
 fn window_conf() -> Conf {
     Conf {
-        window_title: String::from("Ho-ho-Hold my bear!"),
+        window_title: String::from("Ho-ho-Hold my pivo!"),
         window_width: GAME_SIZE_X as i32,
         window_height: GAME_SIZE_Y as i32,
-        fullscreen: true,
+        fullscreen: false,
         ..Default::default()
     }
 }
@@ -59,9 +59,6 @@ async fn main() {
 
         let width_padding = (screen_width() - scaled_game_size_w) * 0.5f32;
         let height_padding = (screen_height() - scaled_game_size_h) * 0.5f32;
-
-        // draw game
-        clear_background(BLACK);
 
         // fit inside window
         draw_texture_ex(
