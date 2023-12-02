@@ -1,4 +1,7 @@
 use macroquad::{prelude::*, miniquad::conf::Platform};
+use santa::Santa;
+
+mod santa;
 
 fn window_conf() -> Conf {
     Conf {
@@ -16,16 +19,13 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let santa_texture: Texture2D = load_texture("res/santa.png").await.unwrap();
+    let mut santa = Santa::new().await;
 
     loop {
-        clear_background(WHITE);
+        clear_background(BLACK);
 
-        if is_key_down(KeyCode::Escape) {
-            break;
-        }
-
-        draw_texture(&santa_texture, 0., 0., WHITE);
+        santa.handle_input();
+        santa.draw();
 
         next_frame().await
     }
