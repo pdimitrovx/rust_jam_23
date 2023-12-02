@@ -25,12 +25,10 @@ impl Santa {
             self.vel.y += 1.0;
         }
 
-        println!("vel: {:?}, pos: {:?}", self.vel, self.pos);
         self.pos += self.vel * get_frame_time();
     }
 
     pub fn draw(&self) {
-        println!("vel: {:?}, pos: {:?}", self.vel, self.pos);
         draw_texture(&self.texture, self.pos.x, self.pos.y, WHITE);
     }
 }
