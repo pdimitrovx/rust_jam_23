@@ -1,6 +1,11 @@
 use macroquad::prelude::*;
 use macroquad::math::Vec2;
 
+use crate::constants::GRAVITY;
+
+const SANTA_MAX_SPEED: f32 = 80.0;
+
+
 pub struct Santa {
     pos: Vec2,
     vel: Vec2,
@@ -25,6 +30,8 @@ impl Santa {
             self.vel.y += 1.0;
         }
 
+        self.vel += GRAVITY;
+        self.vel = self.vel.clamp_length_max(SANTA_MAX_SPEED);
         self.pos += self.vel * get_frame_time();
     }
 

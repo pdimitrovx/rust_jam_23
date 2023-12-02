@@ -1,10 +1,9 @@
+use constants::*;
 use macroquad::prelude::*;
 use santa::Santa;
 
 mod santa;
-
-const GAME_SIZE_X: u32 = 960;
-const GAME_SIZE_Y: u32 = 540;
+mod constants;
 
 fn window_conf() -> Conf {
     Conf {
