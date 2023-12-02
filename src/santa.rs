@@ -1,7 +1,7 @@
 use macroquad::prelude::*;
 use macroquad::math::Vec2;
 
-use crate::constants::GRAVITY;
+use crate::constants::VENUS_GRAVITY;
 
 const SANTA_MAX_SPEED: f32 = 80.0;
 
@@ -29,9 +29,8 @@ impl Santa {
         if is_key_down(KeyCode::S) {
             self.vel.y += 10.0;
         }
-        let mars_gravity = Vec2::new(0.0, 4.3);
 
-        self.vel += mars_gravity;
+        self.vel += VENUS_GRAVITY;
         self.vel = self.vel.clamp_length_max(SANTA_MAX_SPEED);
         self.pos += self.vel * get_frame_time();
     }

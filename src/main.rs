@@ -7,7 +7,7 @@ mod constants;
 
 fn window_conf() -> Conf {
     Conf {
-        window_title: String::from("Ho-ho-Hold my pivo!"),
+        window_title: String::from("Ho-ho-Hold my beer!"),
         window_width: GAME_SIZE_X as i32,
         window_height: GAME_SIZE_Y as i32,
         fullscreen: false,
