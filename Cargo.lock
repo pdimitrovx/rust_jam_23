@@ -131,6 +131,7 @@ name = "ho-ho-hold-my-beer"
 version = "0.1.0"
 dependencies = [
  "macroquad",
+ "once_cell",
  "rand",
 ]
 

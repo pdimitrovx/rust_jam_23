@@ -1,9 +1,13 @@
 use constants::*;
+use game::Game;
 use macroquad::prelude::*;
+use resources::{init_resources, RESOURCES};
 use santa::Santa;
 
 mod santa;
 mod constants;
+mod game;
+mod resources;
 
 fn window_conf() -> Conf {
     Conf {
@@ -18,6 +22,8 @@ fn window_conf() -> Conf {
 #[macroquad::main(window_conf)]
 async fn main() {
 
+    init_resources().await;
+    let mut game = Game::new();
     let game_render_target = render_target(GAME_SIZE_X, GAME_SIZE_Y);
 
     let mut santa = Santa::new().await;
@@ -26,7 +32,8 @@ async fn main() {
         if is_key_down(KeyCode::Escape) {
             break;
         }
-
+        
+        
         let camera = Camera2D {
             // I have no idea why the zoom is this way lmao
             zoom: vec2(1. / GAME_SIZE_X as f32 * 2., 1. / GAME_SIZE_Y as f32 * 2.),
@@ -37,29 +44,32 @@ async fn main() {
             render_target: Some(game_render_target.clone()),
             ..Default::default()
         };
-
+        
         santa.handle_input();
-
+        
         set_camera(&camera);
-
+        
         clear_background(BLACK);
         game_render_target.texture.set_filter(FilterMode::Nearest);
 
+        // DRAW!        
         santa.draw();
-
+        let _nearest_obstacle = game.update(); //TODO can use that to detect colision
+        game.draw();
+        
         set_default_camera();
-
+        
         // calculate game view size based on window size
         let game_diff_w = screen_width() / GAME_SIZE_X as f32;
         let game_diff_h = screen_height() / GAME_SIZE_Y as f32;
         let aspect_diff = game_diff_w.min(game_diff_h);
-
+        
         let scaled_game_size_w = GAME_SIZE_X as f32 * aspect_diff;
         let scaled_game_size_h = GAME_SIZE_Y as f32 * aspect_diff;
-
+        
         let width_padding = (screen_width() - scaled_game_size_w) * 0.5f32;
         let height_padding = (screen_height() - scaled_game_size_h) * 0.5f32;
-
+        
         // fit inside window
         draw_texture_ex(
             &game_render_target.texture,
@@ -71,7 +81,7 @@ async fn main() {
                 ..Default::default()
             },
         );
-
+        
 
         next_frame().await
     }

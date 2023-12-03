@@ -4,8 +4,6 @@ use macroquad::math::Vec2;
 use crate::constants::VENUS_GRAVITY;
 
 const SANTA_MAX_SPEED: f32 = 80.0;
-
-
 pub struct Santa {
     pos: Vec2,
     vel: Vec2,
