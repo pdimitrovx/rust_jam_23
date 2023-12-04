@@ -1,6 +1,7 @@
 use constants::*;
 use game::Game;
 use macroquad::prelude::*;
+use macroquad_platformer::World;
 use resources::{init_resources, RESOURCES};
 use santa::Santa;
 
@@ -26,7 +27,9 @@ async fn main() {
     let mut game = Game::new();
     let game_render_target = render_target(GAME_SIZE_X, GAME_SIZE_Y);
 
-    let mut santa = Santa::new().await;
+    let mut world = World::new();
+
+    let mut santa = Santa::new(&mut world).await;
 
     loop {
         if is_key_down(KeyCode::Escape) {
@@ -45,7 +48,7 @@ async fn main() {
             ..Default::default()
         };
         
-        santa.handle_input();
+        santa.handle_input(&mut world);
         
         set_camera(&camera);
         
@@ -53,7 +56,7 @@ async fn main() {
         game_render_target.texture.set_filter(FilterMode::Nearest);
 
         // DRAW!        
-        santa.draw();
+        santa.draw(&world);
         let _nearest_obstacle = game.update(); //TODO can use that to detect colision
         game.draw();
         
