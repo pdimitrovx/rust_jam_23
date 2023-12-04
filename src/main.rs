@@ -24,11 +24,10 @@ fn window_conf() -> Conf {
 async fn main() {
 
     init_resources().await;
-    let mut game = Game::new();
     let game_render_target = render_target(GAME_SIZE_X, GAME_SIZE_Y);
 
     let mut world = World::new();
-
+    let mut game = Game::new(&mut world);
     let mut santa = Santa::new(&mut world).await;
 
     loop {
@@ -57,7 +56,7 @@ async fn main() {
 
         // DRAW!        
         santa.draw(&world);
-        let _nearest_obstacle = game.update(); //TODO can use that to detect colision
+        let _nearest_obstacle = game.update(&mut world); //TODO can use that to detect colision
         game.draw();
         
         set_default_camera();
