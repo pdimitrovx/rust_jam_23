@@ -13,8 +13,8 @@ mod resources;
 fn window_conf() -> Conf {
     Conf {
         window_title: String::from("Ho-ho-Hold my beer!"),
-        window_width: GAME_SIZE_X as i32,
-        window_height: GAME_SIZE_Y as i32,
+        window_width: WINDOW_WIDTH,
+        window_height: WINDOW_HEIGHT,
         fullscreen: false,
         ..Default::default()
     }
