@@ -1,12 +1,14 @@
-use macroquad::prelude::*;
+use macroquad::{prelude::*, experimental::animation::Animation};
 use macroquad::math::Vec2;
 use macroquad_platformer::{Actor, World};
+use macroquad::experimental::animation::AnimatedSprite;
 
 use crate::constants::VENUS_GRAVITY;
 
 const SANTA_MAX_SPEED: f32 = 80.0;
 pub struct Santa {
     vel: Vec2,
+    animated_sprite: AnimatedSprite,
     texture: Texture2D,
     collider: Actor,
 }
@@ -15,6 +17,17 @@ impl Santa {
     pub async fn new(world: &mut World) -> Santa {
         Santa {
             vel: Vec2::ZERO,
+            animated_sprite: AnimatedSprite::new(
+                102,
+                33,
+                &[Animation {
+                    name: "idle".to_string(),
+                    row: 0,
+                    frames: 8,
+                    fps: 24,
+                }],
+                true,
+            ),
             texture: load_texture("res/santa.png").await.unwrap(),
             collider: world.add_actor(Vec2::ZERO, 30, 100),
         }
@@ -38,6 +51,17 @@ impl Santa {
 
     pub fn draw(&self, world: &World) {
         let pos = world.actor_pos(self.collider);
-        draw_texture(&self.texture, pos.x, pos.y, WHITE);
+        draw_texture_ex(
+            &self.texture,
+            pos.x, 
+            pos.y,
+            WHITE,
+            DrawTextureParams {
+                source: Some(self.animated_sprite.frame().source_rect),
+                dest_size: Some(self.animated_sprite.frame().dest_size),
+                ..Default::default()
+            }
+        );
+        // draw_texture(&self.animated_sprite.frame(), pos.x, pos.y, WHITE);
     }
 }

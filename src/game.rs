@@ -53,13 +53,13 @@ pub struct ObstacleManager {
 }
 impl ObstacleManager {
     fn new(world: &mut World) -> Self {
-        let mut x_pos: f32 = screen_width(); //Some screen value to spawn obstacles;
+        let mut x_pos: f32 = screen_width() / 2.0; //Some screen value to spawn initial ground obstacles;
         let mut manager = Self {
             obstacles: Vec::new(),
             number_of_cleared: 0,
         };
 
-        //TODO: random texture?
+        //TODO: random (house/ground obst) texture?
         let resources = RESOURCES.get().unwrap();
         // let texture = &resources.house_texture;
 
@@ -88,7 +88,7 @@ impl ObstacleManager {
         let x_pos =
             self.obstacles.last().unwrap().position.x + MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES;
 
-        //TODO: random texture?
+
         let resources = RESOURCES.get().unwrap();
         // let texture = &resources.house_texture;
 
@@ -119,7 +119,7 @@ impl ObstacleManager {
 
     fn add_obstacle(&mut self, x_pos: f32, texture: Texture2D, world: &mut World) {
         self.obstacles.push(Obstacle::new(
-            vec2(x_pos, screen_height() / 2.0),
+            vec2(x_pos, screen_height() / 4.0),
             None,
             texture,
             world,
