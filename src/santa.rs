@@ -24,7 +24,7 @@ impl Santa {
                     name: "idle".to_string(),
                     row: 0,
                     frames: 8,
-                    fps: 24,
+                    fps: 12,
                 }],
                 true,
             ),
@@ -49,7 +49,7 @@ impl Santa {
         world.move_v(self.collider, self.vel.y * get_frame_time());
     }
 
-    pub fn draw(&self, world: &World) {
+    pub fn draw(&mut self, world: &World) {
         let pos = world.actor_pos(self.collider);
         draw_texture_ex(
             &self.texture,
@@ -62,6 +62,8 @@ impl Santa {
                 ..Default::default()
             }
         );
+        self.animated_sprite.update();
+
         // draw_texture(&self.animated_sprite.frame(), pos.x, pos.y, WHITE);
     }
 }
