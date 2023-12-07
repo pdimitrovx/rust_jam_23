@@ -1,21 +1,21 @@
 use macroquad::{prelude::*, experimental::animation::Animation};
 use macroquad::math::Vec2;
-use macroquad_platformer::{Actor, World};
 use macroquad::experimental::animation::AnimatedSprite;
 
 use crate::constants::VENUS_GRAVITY;
+use crate::resources::RESOURCES;
 
 const SANTA_MAX_SPEED: f32 = 80.0;
 pub struct Santa {
+    pos: Vec2,
     vel: Vec2,
     animated_sprite: AnimatedSprite,
-    texture: Texture2D,
-    collider: Actor,
 }
 
 impl Santa {
-    pub async fn new(world: &mut World) -> Santa {
+    pub fn new() -> Santa {
         Santa {
+            pos: Vec2::ZERO,
             vel: Vec2::ZERO,
             animated_sprite: AnimatedSprite::new(
                 102,
@@ -28,12 +28,10 @@ impl Santa {
                 }],
                 true,
             ),
-            texture: load_texture("res/santa.png").await.unwrap(),
-            collider: world.add_actor(Vec2::ZERO, 30, 100),
         }
     }
 
-    pub fn handle_input(&mut self, world: &mut World) {
+    pub fn update(&mut self) {
         if is_key_down(KeyCode::W) {
             self.vel.y -= 10.0;
         }
@@ -45,16 +43,16 @@ impl Santa {
         self.vel += VENUS_GRAVITY;
         self.vel = self.vel.clamp_length_max(SANTA_MAX_SPEED);
 
-        world.move_h(self.collider, self.vel.x * get_frame_time());
-        world.move_v(self.collider, self.vel.y * get_frame_time());
+        self.pos += self.vel * get_frame_time();
     }
 
-    pub fn draw(&mut self, world: &World) {
-        let pos = world.actor_pos(self.collider);
+    pub fn draw(&mut self) {
+        println!("pos: {:?}", self.pos);
+
         draw_texture_ex(
-            &self.texture,
-            pos.x, 
-            pos.y,
+            &RESOURCES.get().unwrap().santa_texture,
+            self.pos.x, 
+            self.pos.y,
             WHITE,
             DrawTextureParams {
                 source: Some(self.animated_sprite.frame().source_rect),
@@ -63,7 +61,5 @@ impl Santa {
             }
         );
         self.animated_sprite.update();
-
-        // draw_texture(&self.animated_sprite.frame(), pos.x, pos.y, WHITE);
     }
 }
