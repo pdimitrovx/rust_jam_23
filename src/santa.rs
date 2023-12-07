@@ -2,7 +2,7 @@ use macroquad::{prelude::*, experimental::animation::Animation};
 use macroquad::math::Vec2;
 use macroquad::experimental::animation::AnimatedSprite;
 
-use crate::constants::VENUS_GRAVITY;
+use crate::constants::{VENUS_GRAVITY, GAME_SIZE_Y};
 use crate::resources::RESOURCES;
 
 const SANTA_MAX_SPEED: f32 = 80.0;
@@ -10,6 +10,7 @@ pub struct Santa {
     pos: Vec2,
     vel: Vec2,
     animated_sprite: AnimatedSprite,
+    rect: Rect,
 }
 
 impl Santa {
@@ -28,6 +29,7 @@ impl Santa {
                 }],
                 true,
             ),
+            rect: Rect::new(2., 2., 102., 33.),
         }
     }
 
@@ -44,6 +46,14 @@ impl Santa {
         self.vel = self.vel.clamp_length_max(SANTA_MAX_SPEED);
 
         self.pos += self.vel * get_frame_time();
+
+        if self.pos.y + self.rect.h > GAME_SIZE_Y as f32 {
+            self.pos.y = GAME_SIZE_Y as f32 - self.rect.h;
+        }
+
+        if self.pos.y < 0. {
+            self.pos.y = 0.;
+        }
     }
 
     pub fn draw(&mut self) {
