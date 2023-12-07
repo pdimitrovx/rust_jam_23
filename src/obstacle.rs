@@ -1,8 +1,7 @@
+use macroquad::prelude::*;
+use macroquad::{math::Vec2, texture::Texture2D, color::WHITE};
+
 use crate::resources::RESOURCES;
-use macroquad::{prelude::*, experimental::animation::Animation};
-// use macroquad::rand::gen_range;
-use macroquad_platformer::*;
-use macroquad::experimental::animation::AnimatedSprite;
 
 pub const BACKGROUND_SPEED: f32 = 1.5;
 pub const DEFAULT_OBSTACLE_SPEED: f32 = 2.0;
@@ -10,42 +9,23 @@ pub const OBSTACLE_WIDTH_HOUSE: i32 = 64;
 pub const OBSTACLE_HEIGHT_HOUSE: i32 = 35; //
 pub const STARTING_NUMBER_OF_OBSTACLES: usize = 2;
 pub const MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES: f32 = 64.0;
-pub struct Game {
-    obstacle_manager: ObstacleManager,
-    // background: GameBackground,
-}
-
-// Obstacle - House, Tree // Obstacle (moving faster than background): Bird, Dinosaur, Boeing 777 etc
 
 #[derive(Clone)]
 pub struct Obstacle {
     pub position: Vec2,
     //example has height, maybe we need height as optional on houses?
     pub speed: f32,
-    pub animated_sprite: AnimatedSprite,
     pub texture: Texture2D,
-    pub collider: Actor,
 }
 
 impl Obstacle {
-    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D, world: &mut World) -> Obstacle {
+    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D) -> Obstacle {
         // pub  fn new(texture_filepath: &str ) -> Obstacle {
         Obstacle {
             position: position,
             speed: speed.unwrap_or(DEFAULT_OBSTACLE_SPEED),
-            animated_sprite: AnimatedSprite::new(
-                102,
-                33,
-                &[Animation {
-                    name: "obstacle_animation".to_string(),
-                    row: 0,
-                    frames: 8,
-                    fps: 12,
-                }],
-                true,
-            ),
             texture: texture,
-            collider: world.add_actor(position, OBSTACLE_WIDTH_HOUSE, OBSTACLE_HEIGHT_HOUSE), //todo - take that in 
+            // texture: vec![load_texture(texture_filepath).unwrap()],
         }
     }
 
@@ -64,7 +44,7 @@ pub struct ObstacleManager {
     number_of_cleared: u32,
 }
 impl ObstacleManager {
-    fn new(world: &mut World) -> Self {
+    pub fn new() -> Self {
         let mut x_pos: f32 = screen_width() / 2.0; //Some screen value to spawn initial ground obstacles;
         let mut manager = Self {
             obstacles: Vec::new(),
@@ -76,14 +56,14 @@ impl ObstacleManager {
         // let texture = &resources.house_texture;
 
         for _ in 0..STARTING_NUMBER_OF_OBSTACLES {
-            manager.add_obstacle(x_pos - 10.0, resources.house_texture.clone(), world);
+            manager.add_obstacle(x_pos - 10.0, resources.house_texture.clone());
             x_pos -= OBSTACLE_WIDTH_HOUSE as f32; //Horizontal space
         }
 
         manager
     }
 
-    fn update(&mut self, world: &mut World) -> Obstacle {
+    pub fn update(&mut self) -> Obstacle {
         // Move osbtacles closer to Santa
         self.obstacles
             .iter_mut()
@@ -105,14 +85,14 @@ impl ObstacleManager {
         // let texture = &resources.house_texture;
 
         for _ in 0..num_of_new_obstacles {
-            self.add_obstacle(x_pos, resources.house_texture.clone(), world);
+            self.add_obstacle(x_pos, resources.house_texture.clone());
             self.number_of_cleared += 1;
         }
 
         self.get_nearest_obstacle() // to do ...
     }
 
-    fn draw(&self) {
+    pub fn draw(&self) {
         let score = format!("Score: {}", self.number_of_cleared);
         self.obstacles.iter().for_each(|obstacle| obstacle.draw());
         draw_text(
@@ -129,56 +109,11 @@ impl ObstacleManager {
         self.obstacles[0].clone()
     }
 
-    fn add_obstacle(&mut self, x_pos: f32, texture: Texture2D, world: &mut World) {
+    fn add_obstacle(&mut self, x_pos: f32, texture: Texture2D) {
         self.obstacles.push(Obstacle::new(
             vec2(x_pos, screen_height() / 4.0),
             None,
             texture,
-            world,
         ));
-    }
-}
-
-impl Game {
-    pub fn new(world: &mut World) -> Self {
-        Self {
-            obstacle_manager: ObstacleManager::new(world),
-            // background: Background::new(),
-        }
-    }
-
-    pub fn update(&mut self, world: &mut World) -> Obstacle {
-        // self.background.update();
-        self.obstacle_manager.update(world)
-    }
-
-    pub fn draw(&self) {
-        // self.background.draw();
-        self.obstacle_manager.draw();
-    }
-}
-
-struct GameBackground {
-    position: Vec2,
-}
-
-impl GameBackground {
-    fn new() -> Self {
-        Self{
-            position: Vec2 { x: 0.0, y: screen_width()},
-        }
-    }
-
-    fn update(&mut self) {
-        self.position.x -= BACKGROUND_SPEED;
-        self.position.x -= BACKGROUND_SPEED;
-
-        //Ripped of the internet, no clue what it does??
-        if self.position.x <= -1.0 * screen_width() {
-            self.position.x = screen_width() - 5.0;
-        }
-        if self.position.y <= -1.0 * screen_width() {
-            self.position.y = screen_width() - 5.0;
-        }
     }
 }
