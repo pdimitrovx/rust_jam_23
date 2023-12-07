@@ -5,6 +5,10 @@ use macroquad::experimental::animation::AnimatedSprite;
 use crate::constants::{VENUS_GRAVITY, GAME_SIZE_Y};
 use crate::resources::RESOURCES;
 
+const SANTA_HEIGHT: u32 = 33;
+const SANTA_WIDTH: u32 = 102;
+const SANTA_OFFSET: f32 = 5.;
+
 const SANTA_MAX_SPEED: f32 = 80.0;
 pub struct Santa {
     pos: Vec2,
@@ -16,11 +20,11 @@ pub struct Santa {
 impl Santa {
     pub fn new() -> Santa {
         Santa {
-            pos: Vec2::ZERO,
+            pos: Vec2::new(20., (GAME_SIZE_Y as f32 - SANTA_HEIGHT as f32) / 2.),
             vel: Vec2::ZERO,
             animated_sprite: AnimatedSprite::new(
-                102,
-                33,
+                SANTA_WIDTH,
+                SANTA_HEIGHT,
                 &[Animation {
                     name: "idle".to_string(),
                     row: 0,
@@ -29,7 +33,7 @@ impl Santa {
                 }],
                 true,
             ),
-            rect: Rect::new(2., 2., 102., 33.),
+            rect: Rect::new(SANTA_OFFSET, SANTA_OFFSET, SANTA_WIDTH as f32 - SANTA_OFFSET, SANTA_HEIGHT as f32 - SANTA_OFFSET),
         }
     }
 
@@ -47,8 +51,8 @@ impl Santa {
 
         self.pos += self.vel * get_frame_time();
 
-        if self.pos.y + self.rect.h > GAME_SIZE_Y as f32 {
-            self.pos.y = GAME_SIZE_Y as f32 - self.rect.h;
+        if self.pos.y + SANTA_HEIGHT as f32 > GAME_SIZE_Y as f32 {
+            self.pos.y = GAME_SIZE_Y as f32 - SANTA_HEIGHT as f32;
         }
 
         if self.pos.y < 0. {
@@ -57,8 +61,6 @@ impl Santa {
     }
 
     pub fn draw(&mut self) {
-        println!("pos: {:?}", self.pos);
-
         draw_texture_ex(
             &RESOURCES.get().unwrap().santa_texture,
             self.pos.x, 
