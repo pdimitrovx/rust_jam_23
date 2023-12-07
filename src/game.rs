@@ -1,7 +1,8 @@
 use crate::resources::RESOURCES;
-use macroquad::prelude::*;
+use macroquad::{prelude::*, experimental::animation::Animation};
 // use macroquad::rand::gen_range;
 use macroquad_platformer::*;
+use macroquad::experimental::animation::AnimatedSprite;
 
 pub const BACKGROUND_SPEED: f32 = 1.5;
 pub const DEFAULT_OBSTACLE_SPEED: f32 = 2.0;
@@ -21,6 +22,7 @@ pub struct Obstacle {
     pub position: Vec2,
     //example has height, maybe we need height as optional on houses?
     pub speed: f32,
+    pub animated_sprite: AnimatedSprite,
     pub texture: Texture2D,
     pub collider: Actor,
 }
@@ -31,9 +33,19 @@ impl Obstacle {
         Obstacle {
             position: position,
             speed: speed.unwrap_or(DEFAULT_OBSTACLE_SPEED),
+            animated_sprite: AnimatedSprite::new(
+                102,
+                33,
+                &[Animation {
+                    name: "obstacle_animation".to_string(),
+                    row: 0,
+                    frames: 8,
+                    fps: 12,
+                }],
+                true,
+            ),
             texture: texture,
             collider: world.add_actor(position, OBSTACLE_WIDTH_HOUSE, OBSTACLE_HEIGHT_HOUSE), //todo - take that in 
-            // texture: vec![load_texture(texture_filepath).unwrap()],
         }
     }
 
@@ -146,29 +158,27 @@ impl Game {
     }
 }
 
-// Enable this later
-// struct GameBackground {
-//     position: Vec2,
-// }
+struct GameBackground {
+    position: Vec2,
+}
 
-// impl GameBackground {
-//     fn new() -> Self {
-//         Self{
-//             position: Vec2 { x: 0.0, y: screen_width()},
-//         }
+impl GameBackground {
+    fn new() -> Self {
+        Self{
+            position: Vec2 { x: 0.0, y: screen_width()},
+        }
+    }
 
-//     }
+    fn update(&mut self) {
+        self.position.x -= BACKGROUND_SPEED;
+        self.position.x -= BACKGROUND_SPEED;
 
-//     fn update(&mut self) {
-//         self.position.x -= BACKGROUND_SPEED;
-//         self.position.x -= BACKGROUND_SPEED;
-
-//         //Ripped of the internet, no clue what it does??
-//         if self.position.x <= -1.0 * screen_width() {
-//             self.position.x = screen_width() - 5.0;
-//         }
-//         if self.position.y <= -1.0 * screen_width() {
-//             self.position.y = screen_width() - 5.0;
-//         }
-//     }
-// }
+        //Ripped of the internet, no clue what it does??
+        if self.position.x <= -1.0 * screen_width() {
+            self.position.x = screen_width() - 5.0;
+        }
+        if self.position.y <= -1.0 * screen_width() {
+            self.position.y = screen_width() - 5.0;
+        }
+    }
+}
