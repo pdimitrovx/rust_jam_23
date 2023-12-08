@@ -16,6 +16,7 @@ pub struct Obstacle {
     //example has height, maybe we need height as optional on houses?
     pub speed: f32,
     pub texture: Texture2D,
+    pub rect: Rect,
 }
 
 impl Obstacle {
@@ -26,6 +27,7 @@ impl Obstacle {
             speed: speed.unwrap_or(DEFAULT_OBSTACLE_SPEED),
             texture: texture,
             // texture: vec![load_texture(texture_filepath).unwrap()],
+            rect: Rect::new(0., 0., OBSTACLE_WIDTH_HOUSE as f32, OBSTACLE_HEIGHT_HOUSE as f32),
         }
     }
 
