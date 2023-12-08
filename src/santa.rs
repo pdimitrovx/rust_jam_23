@@ -2,7 +2,7 @@ use macroquad::{prelude::*, experimental::animation::Animation};
 use macroquad::math::Vec2;
 use macroquad::experimental::animation::AnimatedSprite;
 
-use crate::constants::{VENUS_GRAVITY, GAME_SIZE_Y};
+use crate::constants::*;
 use crate::resources::RESOURCES;
 
 const SANTA_HEIGHT: u32 = 33;
@@ -46,6 +46,14 @@ impl Santa {
             self.vel.y += 10.0;
         }
 
+        if is_key_down(KeyCode::A) {
+            self.vel.x -= 10.0;
+        }
+
+        if is_key_down(KeyCode::D) {
+            self.vel.x += 10.0;
+        }
+
         self.vel += VENUS_GRAVITY;
         self.vel = self.vel.clamp_length_max(SANTA_MAX_SPEED);
 
@@ -57,6 +65,14 @@ impl Santa {
 
         if self.pos.y < 0. {
             self.pos.y = 0.;
+        }
+
+        if self.pos.x + SANTA_WIDTH as f32 > GAME_SIZE_X as f32 {
+            self.pos.x = GAME_SIZE_X as f32 - SANTA_WIDTH as f32;
+        }
+
+        if self.pos.x < 0. {
+            self.pos.x = 0.;
         }
     }
 

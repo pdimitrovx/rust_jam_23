@@ -1,6 +1,7 @@
 use macroquad::prelude::*;
 use macroquad::{math::Vec2, texture::Texture2D, color::WHITE};
 
+use crate::constants::GAME_SIZE_X;
 use crate::resources::RESOURCES;
 
 pub const BACKGROUND_SPEED: f32 = 1.5;
@@ -47,7 +48,6 @@ pub struct ObstacleManager {
 }
 impl ObstacleManager {
     pub fn new() -> Self {
-        let mut x_pos: f32 = screen_width() / 2.0; //Some screen value to spawn initial ground obstacles;
         let mut manager = Self {
             obstacles: Vec::new(),
             number_of_cleared: 0,
@@ -57,15 +57,12 @@ impl ObstacleManager {
         let resources = RESOURCES.get().unwrap();
         // let texture = &resources.house_texture;
 
-        for _ in 0..STARTING_NUMBER_OF_OBSTACLES {
-            manager.add_obstacle(x_pos - 10.0, resources.house_texture.clone());
-            x_pos -= OBSTACLE_WIDTH_HOUSE as f32; //Horizontal space
-        }
+        manager.add_obstacle(GAME_SIZE_X as f32, resources.house_texture.clone());
 
         manager
     }
 
-    pub fn update(&mut self) -> Obstacle {
+    pub fn update(&mut self) {
         // Move osbtacles closer to Santa
         self.obstacles
             .iter_mut()
@@ -74,41 +71,29 @@ impl ObstacleManager {
         //TODO: Fix this shiz
         // Remove obstacles beyond the screen
         self.obstacles
-            .retain(|osbtacle| osbtacle.position.x >= -1.0 * OBSTACLE_WIDTH_HOUSE as f32); //this width can be stored on the obstacle
+            .retain(|osbtacle| (osbtacle.position.x + OBSTACLE_WIDTH_HOUSE as f32) > 0.0); //this width can be stored on the obstacle
 
         // Add new obstacles ( to fill in for the ones removed)
-        let num_of_new_obstacles = 
-            STARTING_NUMBER_OF_OBSTACLES - (self.obstacles.len() as f64 / 2.0) as usize;
-        let x_pos =
-            self.obstacles.last().unwrap().position.x + MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES;
+        if let Some(&ref last) = self.obstacles.last() {
+            let x_pos = last.position.x + MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES;
 
-
-        let resources = RESOURCES.get().unwrap();
-        // let texture = &resources.house_texture;
-
-        for _ in 0..num_of_new_obstacles {
-            self.add_obstacle(x_pos, resources.house_texture.clone());
-            self.number_of_cleared += 1;
+            if x_pos < GAME_SIZE_X as f32 {
+                let resources = RESOURCES.get().unwrap();
+                self.add_obstacle(x_pos, resources.house_texture.clone());
+            }
         }
-
-        self.get_nearest_obstacle() // to do ...
     }
 
     pub fn draw(&self) {
-        let score = format!("Score: {}", self.number_of_cleared);
+        //let score = format!("Score: {}", self.number_of_cleared);
         self.obstacles.iter().for_each(|obstacle| obstacle.draw());
-        draw_text(
-            score.as_str(),
-            screen_width() / 2.0 - 90.0,
-            200.0,
-            40.0,
-            WHITE,
-        );
-    }
-
-    fn get_nearest_obstacle(&self) -> Obstacle {
-        // Return Nearest?
-        self.obstacles[0].clone()
+        //draw_text(
+        //    score.as_str(),
+        //    screen_width() / 2.0 - 90.0,
+        //    200.0,
+        //    40.0,
+        //    WHITE,
+        //);
     }
 
     fn add_obstacle(&mut self, x_pos: f32, texture: Texture2D) {
