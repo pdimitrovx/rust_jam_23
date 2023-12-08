@@ -57,7 +57,7 @@ impl ObstacleManager {
         let resources = RESOURCES.get().unwrap();
         // let texture = &resources.house_texture;
 
-        manager.add_obstacle(GAME_SIZE_X as f32, resources.house_texture.clone());
+        manager.add_obstacle(GAME_SIZE_X as f32, resources.get_random_ground_obstacle());
 
         manager
     }
@@ -68,6 +68,7 @@ impl ObstacleManager {
             .iter_mut()
             .for_each(|osbtacle| osbtacle.update());
 
+        println!("Obstacles: {}", self.obstacles.len());
         //TODO: Fix this shiz
         // Remove obstacles beyond the screen
         self.obstacles
@@ -79,7 +80,7 @@ impl ObstacleManager {
 
             if x_pos < GAME_SIZE_X as f32 {
                 let resources = RESOURCES.get().unwrap();
-                self.add_obstacle(x_pos, resources.house_texture.clone());
+                self.add_obstacle(x_pos, resources.get_random_ground_obstacle());
             }
         }
     }

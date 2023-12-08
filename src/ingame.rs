@@ -1,4 +1,4 @@
-use crate::constants::*;
+use crate::{constants::*, GameBackground};
 use crate::gamestate::{Gamestate, CurrentGameState};
 use crate::obstacle::ObstacleManager;
 use crate::santa::Santa;
@@ -8,14 +8,15 @@ use macroquad::prelude::*;
 
 pub struct InGame {
     obstacle_manager: ObstacleManager,
+    background: GameBackground,
     santa: Santa,
-    // background: GameBackground,
 }
 
 impl InGame {
     pub fn new() -> InGame {
         InGame {
             obstacle_manager: ObstacleManager::new(),
+            background: GameBackground::new(),
             santa: Santa::new(), 
         }
     }
@@ -34,6 +35,7 @@ impl Gamestate for InGame {
 
         self.obstacle_manager.update();
         self.santa.update();
+        self.background.update();
         None
     }
 
@@ -47,6 +49,7 @@ impl Gamestate for InGame {
         set_camera(&camera);
         
         // DRAW!        
+        self.background.draw();
         self.santa.draw();
         self.obstacle_manager.draw();
 

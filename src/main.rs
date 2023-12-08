@@ -1,16 +1,17 @@
 use constants::*;
 
+use gamestate::{CurrentGameState, Gamestate};
 use ingame::InGame;
 use macroquad::prelude::*;
-use resources::init_resources;
-use gamestate::{Gamestate, CurrentGameState};
+use obstacle::BACKGROUND_SPEED;
+use resources::{init_resources, RESOURCES};
 
-pub mod santa;
 mod constants;
-mod resources;
-pub mod obstacle;
 pub mod gamestate;
 mod ingame;
+pub mod obstacle;
+mod resources;
+pub mod santa;
 
 fn window_conf() -> Conf {
     Conf {
@@ -22,16 +23,67 @@ fn window_conf() -> Conf {
     }
 }
 
+pub struct GameBackground {
+    position1: f32,
+    position2: f32,
+}
+
+impl GameBackground {
+    pub fn new() -> Self {
+        Self {
+            position1: 0.0,
+            position2: WINDOW_WIDTH as f32,
+        }
+    }
+
+    pub fn update(&mut self) {
+        self.position1 -= BACKGROUND_SPEED;
+        self.position2 -= BACKGROUND_SPEED;
+
+        //Ripped of the internet, no clue what it does??
+        if self.position1 <= -1.0 * screen_width() {
+            self.position1 = screen_width() - 5.0;
+        }
+        if self.position2 <= -1.0 * screen_width() {
+            self.position2 = screen_width() - 5.0;
+        }
+    }
+
+    pub fn draw(&self) {
+        draw_texture_ex(
+            &RESOURCES.get().unwrap().background_texture,
+            self.position1,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(Vec2::new(WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32)),
+                flip_y: true,
+                ..Default::default()
+            },
+        );
+
+        draw_texture_ex(
+            &RESOURCES.get().unwrap().background_texture,
+            self.position2,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(Vec2::new(WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32)),
+                flip_y: true,
+                ..Default::default()
+            },
+        );
+    }
+}
+
 #[macroquad::main(window_conf)]
 async fn main() {
-
     init_resources().await;
 
     let ingame = InGame::new();
     let mut current_gamestate = ingame;
 
     loop {
-
         if let Some(next_gamestate) = current_gamestate.update() {
             if next_gamestate == CurrentGameState::Quit {
                 break;
@@ -39,7 +91,7 @@ async fn main() {
         }
 
         current_gamestate.draw();
-            
+
         next_frame().await
     }
 }
