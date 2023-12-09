@@ -3,7 +3,6 @@ use constants::*;
 use gamestate::{CurrentGameState, Gamestate};
 use ingame::InGame;
 use macroquad::prelude::*;
-use obstacle::BACKGROUND_SPEED;
 use resources::{init_resources, RESOURCES};
 
 mod constants;
@@ -41,11 +40,11 @@ impl GameBackground {
         self.position2 -= BACKGROUND_SPEED;
 
         //Ripped of the internet, no clue what it does??
-        if self.position1 <= -1.0 * screen_width() {
-            self.position1 = screen_width() - 5.0;
+        if self.position1 <= -1.0 * WINDOW_WIDTH as f32 {
+            self.position1 = WINDOW_WIDTH as f32 - 5.0;
         }
-        if self.position2 <= -1.0 * screen_width() {
-            self.position2 = screen_width() - 5.0;
+        if self.position2 <= -1.0 * WINDOW_WIDTH as f32 {
+            self.position2 = WINDOW_WIDTH as f32 - 5.0;
         }
     }
 
@@ -62,17 +61,17 @@ impl GameBackground {
             },
         );
 
-        draw_texture_ex(
-            &RESOURCES.get().unwrap().background_texture,
-            self.position2,
-            0.0,
-            WHITE,
-            DrawTextureParams {
-                dest_size: Some(Vec2::new(WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32)),
-                flip_y: true,
-                ..Default::default()
-            },
-        );
+        // draw_texture_ex(
+        //     &RESOURCES.get().unwrap().background_texture,
+        //     self.position2,
+        //     0.0,
+        //     WHITE,
+        //     DrawTextureParams {
+        //         dest_size: Some(Vec2::new(WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32)),
+        //         flip_y: true,
+        //         ..Default::default()
+        //     },
+        // );
     }
 }
 

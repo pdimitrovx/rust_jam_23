@@ -5,7 +5,6 @@ use macroquad::{color::WHITE, math::Vec2, texture::Texture2D};
 use crate::constants::GAME_SIZE_X;
 use crate::resources::RESOURCES;
 
-pub const BACKGROUND_SPEED: f32 = 1.5;
 pub const DEFAULT_OBSTACLE_SPEED: f32 = 2.0;
 pub const OBSTACLE_WIDTH_HOUSE: i32 = 64;
 pub const OBSTACLE_HEIGHT_HOUSE: i32 = 64; //
