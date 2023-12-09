@@ -138,8 +138,6 @@ impl ObstacleManager {
             .iter_mut()
             .for_each(|osbtacle| osbtacle.update());
 
-        println!("Obstacles: {}", self.ground_obstacles.len());
-
         // Remove Ground obstacles beyond the screen
         self.ground_obstacles.retain(|obstacle| {
             let remove = (obstacle.pos.x + OBSTACLE_WIDTH_GROUND as f32) > 0.0;
@@ -211,21 +209,22 @@ impl ObstacleManager {
     }
 
     pub fn draw(&mut self) {
-        //let score = format!("Score: {}", self.number_of_cleared);
         self.ground_obstacles
-            .iter_mut()
-            .for_each(|obstacle| obstacle.draw());
-
-        self.air_obstacles
-            .iter_mut()
-            .for_each(|obstacle: &mut Obstacle| obstacle.draw());
-        //draw_text(
-        //    score.as_str(),
-        //    screen_width() / 2.0 - 90.0,
-        //    200.0,
-        //    40.0,
-        //    WHITE,
-        //);
+        .iter_mut()
+        .for_each(|obstacle| obstacle.draw());
+    
+    self.air_obstacles
+    .iter_mut()
+    .for_each(|obstacle: &mut Obstacle| obstacle.draw());
+        
+    let score = format!("Score: {}", self.number_of_cleared);
+    draw_text(
+       score.as_str(),
+       5.0,
+15.0,
+       15.0,
+       WHITE,
+    );
     }
 
     fn add_obstacle(
