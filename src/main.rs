@@ -3,15 +3,18 @@ use constants::*;
 use gamestate::{CurrentGameState, Gamestate};
 use ingame::InGame;
 use macroquad::prelude::*;
+use main_menu::MainMenu;
 use resources::{init_resources, RESOURCES};
 
 mod constants;
 pub mod gamestate;
 mod ingame;
+mod main_menu;
 pub mod obstacle;
 mod resources;
 pub mod santa;
 pub mod background;
+pub mod button;
 
 fn window_conf() -> Conf {
     Conf {
@@ -27,8 +30,10 @@ fn window_conf() -> Conf {
 async fn main() {
     init_resources().await;
 
-    let ingame = InGame::new();
-    let mut current_gamestate = ingame;
+    let mut ingame = InGame::new();
+    let mut main_menu = MainMenu::new();
+
+    let mut current_gamestate = main_menu;
 
     loop {
         if let Some(next_gamestate) = current_gamestate.update() {

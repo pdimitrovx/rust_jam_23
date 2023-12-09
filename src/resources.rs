@@ -14,6 +14,9 @@ pub struct Resources {
     pub santa_texture: Texture2D,
     pub background_houses_texture: Texture2D,
     pub background_trees_texture: Texture2D,
+    pub background_texture: Texture2D,
+    pub play_button_spritesheet_texture: Texture2D,
+    pub quit_button_spritesheet_texture: Texture2D,
 }
 
 pub async fn init_resources() {
@@ -33,12 +36,15 @@ impl Resources {
             ground_obstacles: ground_obstacles,
             air_obstacles: air_obstacles,
             santa_texture: load_texture("res/santa.png").await.unwrap(),
+            background_texture: load_texture("res/background/background-houses-road-590x1800.png").await.unwrap(),
             background_houses_texture: load_texture("res/background/background-houses-road-270x1800.png")
                 .await
                 .unwrap(),
             background_trees_texture: load_texture("res/background/background-snowy-trees-270x1800.png")
                 .await
                 .unwrap(),
+            play_button_spritesheet_texture: load_texture("res/play_button.png").await.unwrap(),
+            quit_button_spritesheet_texture: load_texture("res/quit_button.png").await.unwrap(),
         };
 
         let ground_obstacle_dir_path = Path::new(GROUND_OBSTACLE_PATH);
