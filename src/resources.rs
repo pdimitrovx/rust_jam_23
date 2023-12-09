@@ -8,7 +8,6 @@ pub static RESOURCES: OnceCell<Resources> = OnceCell::new();
 
 pub struct Resources {
     pub ground_obstacles: Vec<Texture2D>,
-    // pub house_texture_blue: Texture2D,
     pub santa_texture: Texture2D,
     pub background_houses_texture: Texture2D,
     pub background_trees_texture: Texture2D,
