@@ -31,7 +31,7 @@ impl GameBackground {
     pub fn new() -> Self {
         Self {
             position1: 0.0,
-            position2: 0.0,
+            position2: BACKGROUND_WIDTH as f32,
         }
     }
 
@@ -39,12 +39,11 @@ impl GameBackground {
         self.position1 -= BACKGROUND_SPEED;
         self.position2 -= BACKGROUND_SPEED;
 
-        //Ripped of the internet, no clue what it does??
-        if self.position1 <= -1.0 * WINDOW_WIDTH as f32 {
-            self.position1 = WINDOW_WIDTH as f32 - 5.0;
+        if self.position1 <= -3.75 * GAME_SIZE_X as f32 {
+            self.position1 = GAME_SIZE_X as f32 - 0.0;
         }
-        if self.position2 <= -1.0 * WINDOW_WIDTH as f32 {
-            self.position2 = WINDOW_WIDTH as f32 - 5.0;
+        if self.position2 <= -3.75 * GAME_SIZE_X as f32 {
+            self.position2 = GAME_SIZE_X as f32 - 0.0;
         }
     }
 
@@ -55,23 +54,23 @@ impl GameBackground {
             0.0,
             WHITE,
             DrawTextureParams {
-                dest_size: Some(Vec2::new(WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32)),
-                flip_y: true,
+                dest_size: Some(Vec2::new(BACKGROUND_WIDTH as f32, GAME_SIZE_Y as f32)),
+                flip_y: false,
                 ..Default::default()
             },
         );
 
-        // draw_texture_ex(
-        //     &RESOURCES.get().unwrap().background_texture,
-        //     self.position2,
-        //     0.0,
-        //     WHITE,
-        //     DrawTextureParams {
-        //         dest_size: Some(Vec2::new(WINDOW_WIDTH as f32, WINDOW_HEIGHT as f32)),
-        //         flip_y: true,
-        //         ..Default::default()
-        //     },
-        // );
+        draw_texture_ex(
+            &RESOURCES.get().unwrap().background_texture,
+            self.position2,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(Vec2::new(BACKGROUND_WIDTH as f32, GAME_SIZE_Y as f32)),
+                flip_y: false,
+                ..Default::default()
+            },
+        );
     }
 }
 
