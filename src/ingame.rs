@@ -1,7 +1,8 @@
-use crate::{constants::*, GameBackground};
+use crate::constants::*;
 use crate::gamestate::{Gamestate, CurrentGameState};
 use crate::obstacle::ObstacleManager;
 use crate::santa::Santa;
+use crate::background::GameBackground;
 
 use macroquad::prelude::*;
 // use macroquad::rand::gen_range;
