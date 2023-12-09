@@ -17,6 +17,8 @@ pub const OBSTACLE_HEIGHT_AIR: i32 = 32; //
 pub const STARTING_NUMBER_OF_OBSTACLES: usize = 2;
 pub const MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES: f32 = 64.0;
 
+pub const AIR_OBSTACLE_SPAWN_TIMEOUT_SECS: u64 = 2;
+
 #[derive(Clone)]
 pub struct Obstacle {
     pub pos: Vec2,
@@ -183,22 +185,20 @@ impl ObstacleManager {
         }
 
         // Add new AIR obstacles ( to fill in for the ones removed)
-        {
-            let x_pos_air_obst = if let Some(last) = self.air_obstacles.last() {
-                last.pos.x
-                    + gen_range(
-                        MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES,
-                        MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 400.0,
-                    )
-            } else {
-                gen_range(
-                    MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES,
-                    MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 900.0,
-                ) // even lower chances of UFO
-            };
+        let elapsed_time = self.start_time.elapsed().as_secs();
+        if elapsed_time > AIR_OBSTACLE_SPAWN_TIMEOUT_SECS {
+            let x_pos_air_obst = gen_range(
+                MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES,
+                MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 4000.0,
+            ); // even lower chances of UFO
 
             if x_pos_air_obst < GAME_SIZE_X as f32 {
-                println!("Added - x_pos: {}", x_pos_air_obst);
+                println!(
+                    "Added AIR after {} seconds at x_pos: {}",
+                    elapsed_time, x_pos_air_obst
+                );
+                //reset the time
+                self.start_time = Instant::now();
                 let resources = RESOURCES.get().unwrap();
                 self.add_obstacle(
                     GAME_SIZE_X as f32 + 32.0,
@@ -206,7 +206,6 @@ impl ObstacleManager {
                     Some(resources.get_random_air_obstacle()),
                 );
             }
-
         }
         // println!("Obstacles removed: {}", self.number_of_cleared);
     }
@@ -217,7 +216,7 @@ impl ObstacleManager {
             .iter_mut()
             .for_each(|obstacle| obstacle.draw());
 
-            self.air_obstacles
+        self.air_obstacles
             .iter_mut()
             .for_each(|obstacle: &mut Obstacle| obstacle.draw());
         //draw_text(
@@ -241,14 +240,17 @@ impl ObstacleManager {
 
         if let Some(ground_texture) = ground_texture {
             self.ground_obstacles.push(Obstacle::new(
-                vec2(x_pos, GAME_SIZE_Y as f32 / 8.0),
+                vec2(
+                    x_pos,
+                    GAME_SIZE_Y as f32 - OBSTACLE_HEIGHT_GROUND as f32 * gen_range(1.09, 1.81),
+                ), //1.8 max 1.1 min
                 None,
                 ground_texture,
             ));
         }
 
         //TODO: PUT THE AIR TEXTURE IN CORRECT COORDINTAES - maybe use a y range to spawn at slightly random locations
-        if let Some(air_texture) = air_texture{
+        if let Some(air_texture) = air_texture {
             self.air_obstacles.push(Obstacle::new(
                 // vec2(x_pos, gen_range(OBSTACLE_HEIGHT_AIR as f32 * 1.5, GAME_SIZE_Y as f32 / 2.0)),
                 vec2(x_pos, 0.0),
