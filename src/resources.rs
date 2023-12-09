@@ -28,7 +28,7 @@ impl Resources {
         let mut resources = Self {
             ground_obstacles: ground_obstacles,
             santa_texture: load_texture("res/santa.png").await.unwrap(),
-            background_texture: load_texture("res/background/houses-background-with_road.png")
+            background_texture: load_texture("res/background/background_houses_road.png")
                 .await
                 .unwrap(),
         };

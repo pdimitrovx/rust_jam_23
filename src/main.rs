@@ -32,7 +32,7 @@ impl GameBackground {
     pub fn new() -> Self {
         Self {
             position1: 0.0,
-            position2: WINDOW_WIDTH as f32,
+            position2: 0.0,
         }
     }
 
