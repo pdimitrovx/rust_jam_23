@@ -1,15 +1,19 @@
+use std::time::{Duration, Instant};
+
 use macroquad::experimental::animation::{AnimatedSprite, Animation};
 use macroquad::prelude::*;
 use macroquad::rand::gen_range;
 use macroquad::{color::WHITE, math::Vec2, texture::Texture2D};
 
-use crate::constants::GAME_SIZE_X;
+use crate::constants::{GAME_SIZE_X, GAME_SIZE_Y};
 use crate::resources::RESOURCES;
 
 pub const MIN_OBSTACLE_SPEED: f32 = 1.5;
 pub const MAX_OBSTACLE_SPEED: f32 = 4.0;
-pub const OBSTACLE_WIDTH_HOUSE: i32 = 64;
-pub const OBSTACLE_HEIGHT_HOUSE: i32 = 64; //
+pub const OBSTACLE_WIDTH_GROUND: i32 = 64;
+pub const OBSTACLE_HEIGHT_GROUND: i32 = 64; //
+pub const OBSTACLE_WIDTH_AIR: i32 = 64;
+pub const OBSTACLE_HEIGHT_AIR: i32 = 32; //
 pub const STARTING_NUMBER_OF_OBSTACLES: usize = 2;
 pub const MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES: f32 = 64.0;
 
@@ -24,14 +28,14 @@ pub struct Obstacle {
 }
 
 impl Obstacle {
-    pub fn new_ground_obstacle(position: Vec2, speed: Option<f32>, texture: Texture2D) -> Obstacle {
+    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D) -> Obstacle {
         // pub  fn new(texture_filepath: &str ) -> Obstacle {
         Obstacle {
             pos: position,
             speed: speed.unwrap_or(MIN_OBSTACLE_SPEED),
             animated_sprite: AnimatedSprite::new(
-                OBSTACLE_WIDTH_HOUSE as u32,
-                OBSTACLE_HEIGHT_HOUSE as u32,
+                OBSTACLE_WIDTH_GROUND as u32,
+                OBSTACLE_HEIGHT_GROUND as u32,
                 &[Animation {
                     name: "idle".to_string(),
                     row: 0,
@@ -44,8 +48,8 @@ impl Obstacle {
             rect: Rect::new(
                 0.,
                 0.,
-                OBSTACLE_WIDTH_HOUSE as f32,
-                OBSTACLE_HEIGHT_HOUSE as f32,
+                OBSTACLE_WIDTH_GROUND as f32,
+                OBSTACLE_HEIGHT_GROUND as f32,
             ),
         }
     }
@@ -101,6 +105,7 @@ pub struct ObstacleManager {
     air_obstacles: Vec<Obstacle>,
     // increment for each obstacle that goes past, ie score
     number_of_cleared: u32,
+    start_time: Instant,
 }
 impl ObstacleManager {
     pub fn new() -> Self {
@@ -108,6 +113,7 @@ impl ObstacleManager {
             ground_obstacles: Vec::new(),
             air_obstacles: Vec::new(),
             number_of_cleared: 0,
+            start_time: Instant::now(),
         };
 
         let resources = RESOURCES.get().unwrap();
@@ -126,45 +132,83 @@ impl ObstacleManager {
         self.ground_obstacles
             .iter_mut()
             .for_each(|osbtacle| osbtacle.update());
+        self.air_obstacles
+            .iter_mut()
+            .for_each(|osbtacle| osbtacle.update());
 
         println!("Obstacles: {}", self.ground_obstacles.len());
 
-        // Remove obstacles beyond the screen
+        // Remove Ground obstacles beyond the screen
         self.ground_obstacles.retain(|obstacle| {
-            let remove = (obstacle.pos.x + OBSTACLE_WIDTH_HOUSE as f32) > 0.0;
+            let remove = (obstacle.pos.x + OBSTACLE_WIDTH_GROUND as f32) > 0.0;
             if !remove {
                 self.number_of_cleared += 1;
             }
             remove
         });
 
-        // Remove Air obstacles that have passed
+        // Remove Air obstacles beyond the screen
         self.air_obstacles.retain(|obstacle| {
-            let remove = (obstacle.pos.x + OBSTACLE_WIDTH_HOUSE as f32) > 0.0;
+            let remove = (obstacle.pos.x + OBSTACLE_WIDTH_GROUND as f32) > 0.0;
             if !remove {
                 self.number_of_cleared += 3; //Triple score increase
             }
             remove
         });
 
-        // Add new obstacles ( to fill in for the ones removed)
-        let x_pos = if let Some(last) = self.ground_obstacles.last() {
-            last.pos.x + gen_range(MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES, MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 400.0)
-        } else {
-            gen_range(MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES, MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 400.0)
-        };
+        // Add new ground obstacles ( to fill in for the ones removed)
+        {
+            let x_pos_ground_obst = if let Some(last) = self.ground_obstacles.last() {
+                last.pos.x
+                    + gen_range(
+                        MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES,
+                        MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 400.0,
+                    )
+            } else {
+                gen_range(
+                    MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES,
+                    MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 400.0,
+                )
+            };
 
-        if x_pos < GAME_SIZE_X as f32 {
-            println!("Added - x_pos: {}", x_pos);
-            let resources = RESOURCES.get().unwrap();
-            self.add_obstacle(
-                GAME_SIZE_X as f32 + 32.0,
-                Some(resources.get_random_ground_obstacle()),
-                None,
-            );
+            if x_pos_ground_obst < GAME_SIZE_X as f32 {
+                println!("Added - x_pos: {}", x_pos_ground_obst);
+                let resources = RESOURCES.get().unwrap();
+                self.add_obstacle(
+                    GAME_SIZE_X as f32 + 32.0,
+                    Some(resources.get_random_ground_obstacle()),
+                    None,
+                );
+            }
         }
 
-        println!("Obstacles removed: {}", self.number_of_cleared);
+        // Add new AIR obstacles ( to fill in for the ones removed)
+        {
+            let x_pos_air_obst = if let Some(last) = self.air_obstacles.last() {
+                last.pos.x
+                    + gen_range(
+                        MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES,
+                        MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 400.0,
+                    )
+            } else {
+                gen_range(
+                    MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES,
+                    MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES * 900.0,
+                ) // even lower chances of UFO
+            };
+
+            if x_pos_air_obst < GAME_SIZE_X as f32 {
+                println!("Added - x_pos: {}", x_pos_air_obst);
+                let resources = RESOURCES.get().unwrap();
+                self.add_obstacle(
+                    GAME_SIZE_X as f32 + 32.0,
+                    None,
+                    Some(resources.get_random_air_obstacle()),
+                );
+            }
+
+        }
+        // println!("Obstacles removed: {}", self.number_of_cleared);
     }
 
     pub fn draw(&mut self) {
@@ -172,6 +216,10 @@ impl ObstacleManager {
         self.ground_obstacles
             .iter_mut()
             .for_each(|obstacle| obstacle.draw());
+
+            self.air_obstacles
+            .iter_mut()
+            .for_each(|obstacle: &mut Obstacle| obstacle.draw());
         //draw_text(
         //    score.as_str(),
         //    screen_width() / 2.0 - 90.0,
@@ -192,21 +240,21 @@ impl ObstacleManager {
         }
 
         if let Some(ground_texture) = ground_texture {
-            self.ground_obstacles.push(Obstacle::new_ground_obstacle(
-                vec2(x_pos, screen_height() / 4.0),
+            self.ground_obstacles.push(Obstacle::new(
+                vec2(x_pos, GAME_SIZE_Y as f32 / 8.0),
                 None,
                 ground_texture,
             ));
         }
 
         //TODO: PUT THE AIR TEXTURE IN CORRECT COORDINTAES - maybe use a y range to spawn at slightly random locations
-        // if let Some(air_texture) = air_texture{
-
-        //     self.ground_obstacles.push(Obstacle::new(
-        //         vec2(x_pos, screen_height() / 4.0),
-        //         None,
-        //         air_texture,
-        //     ));
-        // }
+        if let Some(air_texture) = air_texture{
+            self.air_obstacles.push(Obstacle::new(
+                // vec2(x_pos, gen_range(OBSTACLE_HEIGHT_AIR as f32 * 1.5, GAME_SIZE_Y as f32 / 2.0)),
+                vec2(x_pos, 0.0),
+                Some(MAX_OBSTACLE_SPEED),
+                air_texture,
+            ));
+        }
     }
 }
