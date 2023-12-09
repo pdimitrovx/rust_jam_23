@@ -23,34 +23,47 @@ fn window_conf() -> Conf {
 }
 
 pub struct GameBackground {
-    position1: f32,
-    position2: f32,
+    houses_position1: f32,
+    houses_position2: f32,
+    trees_position1: f32,
+    trees_position2: f32,
 }
 
 impl GameBackground {
     pub fn new() -> Self {
         Self {
-            position1: 0.0,
-            position2: BACKGROUND_WIDTH as f32,
+            houses_position1: 0.0,
+            houses_position2: BACKGROUND_WIDTH as f32,
+            trees_position1: 0.0,
+            trees_position2: BACKGROUND_WIDTH as f32,
         }
     }
 
     pub fn update(&mut self) {
-        self.position1 -= BACKGROUND_SPEED;
-        self.position2 -= BACKGROUND_SPEED;
+        self.houses_position1 -= BACKGROUND_SPEED / 2.0;
+        self.houses_position2 -= BACKGROUND_SPEED / 2.0;
+        self.trees_position1 -= BACKGROUND_SPEED;
+        self.trees_position2 -= BACKGROUND_SPEED;
 
-        if self.position1 <= -3.75 * GAME_SIZE_X as f32 {
-            self.position1 = GAME_SIZE_X as f32 - 0.0;
+        if self.houses_position1 <= -3.75 * GAME_SIZE_X as f32 {
+            self.houses_position1 = GAME_SIZE_X as f32 - 0.0;
         }
-        if self.position2 <= -3.75 * GAME_SIZE_X as f32 {
-            self.position2 = GAME_SIZE_X as f32 - 0.0;
+        if self.houses_position2 <= -3.75 * GAME_SIZE_X as f32 {
+            self.houses_position2 = GAME_SIZE_X as f32 - 0.0;
+        }
+        if self.trees_position1 <= -3.75 * GAME_SIZE_X as f32 {
+            self.trees_position1 = GAME_SIZE_X as f32 - 0.0;
+        }
+        if self.trees_position2 <= -3.75 * GAME_SIZE_X as f32 {
+            self.trees_position2 = GAME_SIZE_X as f32 - 0.0;
         }
     }
 
     pub fn draw(&self) {
+        // Houses part 1
         draw_texture_ex(
-            &RESOURCES.get().unwrap().background_texture,
-            self.position1,
+            &RESOURCES.get().unwrap().background_houses_texture,
+            self.houses_position1,
             0.0,
             WHITE,
             DrawTextureParams {
@@ -60,9 +73,36 @@ impl GameBackground {
             },
         );
 
+        // Houses part 2
         draw_texture_ex(
-            &RESOURCES.get().unwrap().background_texture,
-            self.position2,
+            &RESOURCES.get().unwrap().background_houses_texture,
+            self.houses_position2,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(Vec2::new(BACKGROUND_WIDTH as f32, GAME_SIZE_Y as f32)),
+                flip_y: false,
+                ..Default::default()
+            },
+        );
+
+        // Trees layer part 1
+        draw_texture_ex(
+            &RESOURCES.get().unwrap().background_trees_texture,
+            self.trees_position1,
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                dest_size: Some(Vec2::new(BACKGROUND_WIDTH as f32, GAME_SIZE_Y as f32)),
+                flip_y: false,
+                ..Default::default()
+            },
+        );
+
+        // Trees layer part 2
+        draw_texture_ex(
+            &RESOURCES.get().unwrap().background_trees_texture,
+            self.trees_position2,
             0.0,
             WHITE,
             DrawTextureParams {

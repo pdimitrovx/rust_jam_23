@@ -10,7 +10,8 @@ pub struct Resources {
     pub ground_obstacles: Vec<Texture2D>,
     // pub house_texture_blue: Texture2D,
     pub santa_texture: Texture2D,
-    pub background_texture: Texture2D,
+    pub background_houses_texture: Texture2D,
+    pub background_trees_texture: Texture2D,
 }
 
 pub async fn init_resources() {
@@ -28,7 +29,10 @@ impl Resources {
         let mut resources = Self {
             ground_obstacles: ground_obstacles,
             santa_texture: load_texture("res/santa.png").await.unwrap(),
-            background_texture: load_texture("res/background/background-houses-road-270x1800.png")
+            background_houses_texture: load_texture("res/background/background-houses-road-270x1800.png")
+                .await
+                .unwrap(),
+            background_trees_texture: load_texture("res/background/background-snowy-trees-270x1800.png")
                 .await
                 .unwrap(),
         };
