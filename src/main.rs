@@ -33,13 +33,17 @@ async fn main() {
     let mut ingame = InGame::new();
     let mut main_menu = MainMenu::new();
 
-    let mut current_gamestate = main_menu;
+    let mut current_gamestate: &mut dyn Gamestate = &mut main_menu;
 
     loop {
         if let Some(next_gamestate) = current_gamestate.update() {
-            if next_gamestate == CurrentGameState::Quit {
-                break;
+            match next_gamestate {
+                CurrentGameState::Quit => break,
+                CurrentGameState::InGame => current_gamestate = &mut ingame,
             }
+
+            current_gamestate.init();
+            continue;
         }
 
         current_gamestate.draw();

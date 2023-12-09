@@ -37,6 +37,10 @@ impl Gamestate for MainMenu {
             return Some(CurrentGameState::Quit)
         }
 
+        if self.play_button.was_pressed() {
+            return Some(CurrentGameState::InGame)
+        }
+
         None
     }
 
