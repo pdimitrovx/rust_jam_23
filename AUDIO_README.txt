@@ -1,0 +1,1 @@
+If you are on linux, you need to install libasound2-dev
