@@ -10,14 +10,14 @@ use crate::resources::RESOURCES;
 
 pub const MIN_OBSTACLE_SPEED: f32 = 1.5;
 pub const MAX_OBSTACLE_SPEED: f32 = 4.0;
-pub const OBSTACLE_WIDTH_GROUND: i32 = 64;
-pub const OBSTACLE_HEIGHT_GROUND: i32 = 64; //
+pub const OBSTACLE_WIDTH_GROUND: i32 = 128;
+pub const OBSTACLE_HEIGHT_GROUND: i32 = 128; //
 pub const OBSTACLE_WIDTH_AIR: i32 = 64;
 pub const OBSTACLE_HEIGHT_AIR: i32 = 32; //
 pub const STARTING_NUMBER_OF_OBSTACLES: usize = 2;
 pub const MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES: f32 = 64.0;
 
-pub const AIR_OBSTACLE_SPAWN_TIMEOUT_SECS: u64 = 2;
+pub const AIR_OBSTACLE_SPAWN_TIMEOUT_SECS: u64 = 1;
 
 #[derive(Clone)]
 pub struct Obstacle {
