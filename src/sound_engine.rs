@@ -8,6 +8,7 @@ pub enum Cues {
     SfxCrash,
     SfxUfo,
     SfxClick,
+    SfxHo,
 }
 
 pub struct SoundEngine {
@@ -16,7 +17,10 @@ pub struct SoundEngine {
     sfx_crash: Sound,
     sfx_ufo: Sound,
     sfx_click: Sound,
+    sfx_ho: Vec<Sound>,
+    ho_head: usize,
     ufo_cue: bool,
+    current_score: u32,
 }
 
 impl SoundEngine {
@@ -26,6 +30,14 @@ impl SoundEngine {
         let sfx_crash = load_sound("res/audio/sfx_crash.ogg").await.unwrap();
         let sfx_ufo = load_sound("res/audio/sfx_ufo.ogg").await.unwrap();
         let sfx_click = load_sound("res/audio/sfx_click.ogg").await.unwrap();
+        let sfx_ho = vec![
+            load_sound("res/audio/sfx_ho1.ogg").await.unwrap(),
+            load_sound("res/audio/sfx_ho2.ogg").await.unwrap(),
+            load_sound("res/audio/sfx_ho3.ogg").await.unwrap(),
+            load_sound("res/audio/sfx_ho4.ogg").await.unwrap(),
+            load_sound("res/audio/sfx_ho5.ogg").await.unwrap(),
+            load_sound("res/audio/sfx_ho6.ogg").await.unwrap(),
+        ];
 
         Self {
             music_menu,
@@ -33,7 +45,10 @@ impl SoundEngine {
             sfx_crash,
             sfx_ufo,
             sfx_click,
+            sfx_ho,
+            ho_head: 0,
             ufo_cue: false,
+            current_score: 0,
         }
     }
 
@@ -71,6 +86,19 @@ impl SoundEngine {
                 }
             }
             Cues::SfxClick => play_sound_once(&self.sfx_click),
+            Cues::SfxHo => {
+                play_sound(
+                    &self.sfx_ho[self.ho_head],
+                    PlaySoundParams {
+                        looped: false,
+                        volume: 0.7,
+                    },
+                );
+                self.ho_head += 1;
+                if self.ho_head > self.sfx_ho.len() - 1 {
+                    self.ho_head = 0;
+                }
+            }
         }
     }
 
@@ -92,6 +120,14 @@ impl SoundEngine {
             Cues::SfxClick => {
                 stop_sound(&self.sfx_click);
             }
+            Cues::SfxHo => {}
+        }
+    }
+
+    pub fn trigger_ho(&mut self, score: u32) {
+        if self.current_score != score {
+            self.current_score = score;
+            self.play(Cues::SfxHo);
         }
     }
 }

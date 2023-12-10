@@ -73,6 +73,8 @@ impl Gamestate for InGame {
             self.santa.update();
             self.background.update();
 
+            sound.trigger_ho(self.obstacle_manager.get_num_houses_cleared());
+
             if self.obstacle_manager.has_air_obstacle() {
                 sound.play(Cues::SfxUfo);
             } else {
