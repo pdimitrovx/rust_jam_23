@@ -20,11 +20,11 @@ pub struct SoundEngine {
 
 impl SoundEngine {
     pub async fn new() -> Self {
-        let music_menu = load_sound("res/audio/menu_theme.ogg").await.unwrap();
-        let music_game = load_sound("res/audio/menu_theme.ogg").await.unwrap();
-        let sfx_crash = load_sound("res/audio/menu_theme.ogg").await.unwrap();
-        let sfx_ufo = load_sound("res/audio/menu_theme.ogg").await.unwrap();
-        let sfx_click = load_sound("res/audio/menu_theme.ogg").await.unwrap();
+        let music_menu = load_sound("res/audio/music_menu.ogg").await.unwrap();
+        let music_game = load_sound("res/audio/music_game.ogg").await.unwrap();
+        let sfx_crash = load_sound("res/audio/sfx_crash.ogg").await.unwrap();
+        let sfx_ufo = load_sound("res/audio/sfx_ufo.ogg").await.unwrap();
+        let sfx_click = load_sound("res/audio/sfx_click.ogg").await.unwrap();
 
         Self {
             music_menu,
@@ -42,7 +42,7 @@ impl SoundEngine {
                     &self.music_menu,
                     PlaySoundParams {
                         looped: true,
-                        volume: 1.0,
+                        volume: 0.0,
                     },
                 );
             }
