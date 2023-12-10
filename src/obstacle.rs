@@ -1,4 +1,4 @@
-use std::time::{Duration, Instant};
+use std::time::Instant;
 
 use macroquad::experimental::animation::{AnimatedSprite, Animation};
 use macroquad::prelude::*;
@@ -38,7 +38,16 @@ impl Obstacle {
         self.speed = speed;
     }
 
-    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D, dims: Vec2, offsets: Vec2, frames: u32, tile_width: u32, tile_height: u32, ) -> Obstacle {
+    pub fn new(
+        position: Vec2,
+        speed: Option<f32>,
+        texture: Texture2D,
+        dims: Vec2,
+        offsets: Vec2,
+        frames: u32,
+        tile_width: u32,
+        tile_height: u32,
+    ) -> Obstacle {
         // pub  fn new(texture_filepath: &str ) -> Obstacle {
         Obstacle {
             pos: position,
@@ -108,7 +117,7 @@ impl Obstacle {
 
     fn update(&mut self) {
         self.pos.x -= self.speed;
-        
+
         self.rect.x = self.pos.x + self.offsets.x;
         self.rect.y = self.pos.y + self.offsets.y;
         // println!("pos: {:?}, rect{:?}", self.pos, self.rect);

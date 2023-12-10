@@ -1,9 +1,7 @@
-use macroquad::{prelude::*, experimental::animation::Animation};
 use macroquad::math::Vec2;
-use macroquad::experimental::animation::AnimatedSprite;
+use macroquad::prelude::*;
 
 use crate::constants::*;
-use crate::resources::RESOURCES;
 
 const BUTTON_HEIGHT: u32 = 17;
 const BUTTON_WIDTH: u32 = 30;
@@ -38,18 +36,17 @@ impl Button {
         current_mouse_position.0 = current_mouse_position.0 / 2.0;
         current_mouse_position.1 = current_mouse_position.1 / 2.0;
 
-        let is_within_width = current_mouse_position.0 > (self.pos.x + BUTTON_X_OFFSET as f32) &&
-            current_mouse_position.0 < (self.pos.x + BUTTON_WIDTH as f32 - BUTTON_X_OFFSET as f32);
+        let is_within_width = current_mouse_position.0 > (self.pos.x + BUTTON_X_OFFSET as f32)
+            && current_mouse_position.0
+                < (self.pos.x + BUTTON_WIDTH as f32 - BUTTON_X_OFFSET as f32);
 
-        let is_within_height = current_mouse_position.1 > self.pos.y + BUTTON_Y_OFFSET as f32 &&
-            current_mouse_position.1 < self.pos.y + BUTTON_TEXTURE_HEIGHT as f32;
+        let is_within_height = current_mouse_position.1 > self.pos.y + BUTTON_Y_OFFSET as f32
+            && current_mouse_position.1 < self.pos.y + BUTTON_TEXTURE_HEIGHT as f32;
 
         is_within_width && is_within_height
-
     }
 
     pub fn update(&mut self) {
-
         if is_mouse_button_released(MouseButton::Left) {
             if self.is_mouse_within_bounds() {
                 self.was_released = true;
@@ -65,27 +62,35 @@ impl Button {
         } else {
             self.was_pressed = false;
         }
-
     }
 
     pub fn draw(&mut self) {
-
         let source_rect = if self.was_pressed {
-            Rect::new(BUTTON_TEXTURE_WIDTH as f32, 0.0, BUTTON_TEXTURE_WIDTH as f32, BUTTON_TEXTURE_HEIGHT as f32)
+            Rect::new(
+                BUTTON_TEXTURE_WIDTH as f32,
+                0.0,
+                BUTTON_TEXTURE_WIDTH as f32,
+                BUTTON_TEXTURE_HEIGHT as f32,
+            )
         } else {
-            Rect::new(0.0, 0.0, BUTTON_TEXTURE_WIDTH as f32, BUTTON_TEXTURE_HEIGHT as f32)
+            Rect::new(
+                0.0,
+                0.0,
+                BUTTON_TEXTURE_WIDTH as f32,
+                BUTTON_TEXTURE_HEIGHT as f32,
+            )
         };
 
         draw_texture_ex(
             &self.texture,
-            self.pos.x, 
+            self.pos.x,
             self.pos.y,
             WHITE,
             DrawTextureParams {
                 source: Some(source_rect),
                 dest_size: Some(self.dest),
                 ..Default::default()
-            }
+            },
         );
     }
 }

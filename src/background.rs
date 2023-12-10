@@ -1,6 +1,13 @@
-use macroquad::{texture::{draw_texture_ex, DrawTextureParams}, color::WHITE, math::Vec2};
+use macroquad::{
+    color::WHITE,
+    math::Vec2,
+    texture::{draw_texture_ex, DrawTextureParams},
+};
 
-use crate::{constants::{BACKGROUND_WIDTH, BACKGROUND_SPEED, GAME_SIZE_X, GAME_SIZE_Y}, resources::RESOURCES};
+use crate::{
+    constants::{BACKGROUND_WIDTH, GAME_SIZE_X, GAME_SIZE_Y},
+    resources::RESOURCES,
+};
 
 pub struct GameBackground {
     houses_position1: f32,

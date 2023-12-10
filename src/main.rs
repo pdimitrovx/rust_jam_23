@@ -2,12 +2,9 @@ use constants::*;
 
 use gamestate::{CurrentGameState, Gamestate};
 use ingame::InGame;
-use macroquad::{
-    audio::{load_sound, play_sound_once, stop_sound},
-    prelude::*,
-};
+use macroquad::prelude::*;
 use main_menu::MainMenu;
-use resources::{init_resources, RESOURCES};
+use resources::init_resources;
 
 pub mod background;
 pub mod button;
