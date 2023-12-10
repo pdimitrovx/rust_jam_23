@@ -20,7 +20,7 @@ pub const AIR_OBSTACLE_FRAME_COUNT: u32 = 17; //
 pub const STARTING_NUMBER_OF_OBSTACLES: usize = 2;
 pub const MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES: f32 = 64.0;
 
-pub const AIR_OBSTACLE_SPAWN_TIMEOUT_SECS: u64 = 1;
+pub const AIR_OBSTACLE_SPAWN_TIMEOUT_SECS: u64 = 10;
 
 #[derive(Clone)]
 pub struct Obstacle {
