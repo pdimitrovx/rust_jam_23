@@ -2,10 +2,15 @@ use constants::*;
 
 use gamestate::{CurrentGameState, Gamestate};
 use ingame::InGame;
-use macroquad::prelude::*;
+use macroquad::{
+    audio::{load_sound, play_sound_once, stop_sound},
+    prelude::*,
+};
 use main_menu::MainMenu;
 use resources::{init_resources, RESOURCES};
 
+pub mod background;
+pub mod button;
 mod constants;
 pub mod gamestate;
 mod ingame;
@@ -13,8 +18,7 @@ mod main_menu;
 pub mod obstacle;
 mod resources;
 pub mod santa;
-pub mod background;
-pub mod button;
+mod sound_engine;
 
 fn window_conf() -> Conf {
     Conf {
@@ -30,13 +34,17 @@ fn window_conf() -> Conf {
 async fn main() {
     init_resources().await;
 
+    let sound = sound_engine::SoundEngine::new().await;
+
     let mut ingame = InGame::new();
     let mut main_menu = MainMenu::new();
 
     let mut current_gamestate: &mut dyn Gamestate = &mut main_menu;
+    sound.play(sound_engine::Cues::MusicMenu);
 
     loop {
         if let Some(next_gamestate) = current_gamestate.update() {
+            sound.stop(sound_engine::Cues::MusicMenu);
             match next_gamestate {
                 CurrentGameState::Quit => break,
                 CurrentGameState::InGame => current_gamestate = &mut ingame,
