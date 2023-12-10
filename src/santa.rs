@@ -37,6 +37,10 @@ impl Santa {
         }
     }
 
+    pub fn check_for_collisions(&self, obstacles: Vec<Rect>) -> bool {
+        obstacles.iter().any(|obstacle| obstacle.overlaps(&self.rect))
+    }
+
     pub fn update(&mut self) {
         if is_key_down(KeyCode::W) {
             self.vel.y -= 10.0;
@@ -74,6 +78,9 @@ impl Santa {
         if self.pos.x < 0. {
             self.pos.x = 0.;
         }
+
+        self.rect.x = self.pos.x + SANTA_OFFSET;
+        self.rect.y = self.pos.y + SANTA_OFFSET;
     }
 
     pub fn draw(&mut self) {

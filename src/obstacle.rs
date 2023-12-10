@@ -27,10 +27,11 @@ pub struct Obstacle {
     pub animated_sprite: AnimatedSprite,
     pub texture: Texture2D,
     pub rect: Rect,
+    offsets: Vec2,
 }
 
 impl Obstacle {
-    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D) -> Obstacle {
+    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D, dims: Vec2, offsets: Vec2) -> Obstacle {
         // pub  fn new(texture_filepath: &str ) -> Obstacle {
         Obstacle {
             pos: position,
@@ -48,11 +49,12 @@ impl Obstacle {
             ),
             texture: texture,
             rect: Rect::new(
-                0.,
-                0.,
-                OBSTACLE_WIDTH_GROUND as f32,
-                OBSTACLE_HEIGHT_GROUND as f32,
+                offsets.x,
+                offsets.y,
+                dims.x,
+                dims.y,
             ),
+            offsets,
         }
     }
 
@@ -99,6 +101,9 @@ impl Obstacle {
 
     fn update(&mut self) {
         self.pos.x -= self.speed;
+
+        self.rect.x = self.pos.x + self.offsets.x;
+        self.rect.y = self.pos.y + self.offsets.y;
     }
 }
 
@@ -124,9 +129,17 @@ impl ObstacleManager {
             GAME_SIZE_X as f32,
             Some(resources.get_random_ground_obstacle()),
             None,
+            Vec2::new(30.0, 30.0),
+            Vec2::new(17.0, 24.0),
         );
 
         manager
+    }
+
+    pub fn get_obstacle_rects(&self) -> Vec<Rect> {
+        let mut rects = self.ground_obstacles.iter().map(|obstacle| obstacle.rect).collect::<Vec<Rect>>();
+        rects.append(&mut self.air_obstacles.iter().map(|obstacle| obstacle.rect).collect::<Vec<Rect>>());
+        rects
     }
 
     pub fn update(&mut self) {
@@ -178,6 +191,8 @@ impl ObstacleManager {
                     GAME_SIZE_X as f32 + 32.0,
                     Some(resources.get_random_ground_obstacle()),
                     None,
+                    Vec2::new(30.0, 30.0),
+                    Vec2::new(17.0, 24.0),
                 );
             }
         }
@@ -202,10 +217,16 @@ impl ObstacleManager {
                     GAME_SIZE_X as f32 + 32.0,
                     None,
                     Some(resources.get_random_air_obstacle()),
+                    Vec2::new(44.0, 60.0),
+                    Vec2::new(10.0, 4.0),
                 );
             }
         }
         // println!("Obstacles removed: {}", self.number_of_cleared);
+    }
+
+    pub fn get_num_houses_cleared(&self) -> u32 {
+        self.number_of_cleared
     }
 
     pub fn draw(&mut self) {
@@ -213,25 +234,18 @@ impl ObstacleManager {
         .iter_mut()
         .for_each(|obstacle| obstacle.draw());
     
-    self.air_obstacles
-    .iter_mut()
-    .for_each(|obstacle: &mut Obstacle| obstacle.draw());
-        
-    let score = format!("Score: {}", self.number_of_cleared);
-    draw_text(
-       score.as_str(),
-       5.0,
-15.0,
-       15.0,
-       WHITE,
-    );
+        self.air_obstacles
+        .iter_mut()
+        .for_each(|obstacle: &mut Obstacle| obstacle.draw());
     }
-
+        
     fn add_obstacle(
         &mut self,
         x_pos: f32,
         ground_texture: Option<Texture2D>,
         air_texture: Option<Texture2D>,
+        dims: Vec2,
+        offsets: Vec2,
     ) {
         if ground_texture.is_none() && air_texture.is_none() {
             panic!("you are an idion & you called add obstacle without a texture")
@@ -245,6 +259,8 @@ impl ObstacleManager {
                 ), //1.8 max 1.1 min
                 None,
                 ground_texture,
+                dims,
+                offsets,
             ));
         }
 
@@ -255,6 +271,8 @@ impl ObstacleManager {
                 vec2(x_pos, 0.0),
                 Some(MAX_OBSTACLE_SPEED),
                 air_texture,
+                dims,
+                offsets,
             ));
         }
     }
