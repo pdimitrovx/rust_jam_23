@@ -44,7 +44,7 @@ impl SoundEngine {
                     &self.music_menu,
                     PlaySoundParams {
                         looped: true,
-                        volume: 0.9,
+                        volume: 0.7,
                     },
                 );
             }
@@ -53,7 +53,7 @@ impl SoundEngine {
                     &self.music_game,
                     PlaySoundParams {
                         looped: true,
-                        volume: 0.9,
+                        volume: 0.7,
                     },
                 );
             }
@@ -65,7 +65,7 @@ impl SoundEngine {
                         &self.sfx_ufo,
                         PlaySoundParams {
                             looped: true,
-                            volume: 0.9,
+                            volume: 0.2,
                         },
                     );
                 }

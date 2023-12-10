@@ -1,11 +1,11 @@
-use crate::{constants::*, sound_engine};
-use crate::gamestate::{Gamestate, CurrentGameState};
+use crate::background::GameBackground;
+use crate::button::Button;
+use crate::gamestate::{CurrentGameState, Gamestate};
 use crate::obstacle::ObstacleManager;
 use crate::resources::RESOURCES;
 use crate::santa::Santa;
-use crate::background::GameBackground;
-use crate::button::Button;
-use crate::sound_engine::{SoundEngine, Cues};
+use crate::sound_engine::{Cues, SoundEngine};
+use crate::{constants::*, sound_engine};
 
 use macroquad::prelude::*;
 // use macroquad::rand::gen_range;
@@ -26,7 +26,14 @@ impl InGame {
             background: GameBackground::new(),
             santa: Santa::new(),
             game_over: false,
-            quit_button: Button::new(Vec2::new(button_pos_x, 300.0), RESOURCES.get().unwrap().quit_button_spritesheet_texture.clone()),
+            quit_button: Button::new(
+                Vec2::new(button_pos_x, 300.0),
+                RESOURCES
+                    .get()
+                    .unwrap()
+                    .quit_button_spritesheet_texture
+                    .clone(),
+            ),
         }
     }
 }
@@ -38,12 +45,12 @@ impl InGame {
             draw_text(score.as_str(), 5.0, 15.0, 25.0, WHITE);
         } else {
             let score = format!("Score: {}", self.obstacle_manager.get_num_houses_cleared());
-            draw_text(score.as_str(),420.0, 200.0, 35.0, RED);
+            draw_text(score.as_str(), 420.0, 200.0, 35.0, RED);
         }
     }
 
     fn draw_game_over_ui(&mut self) {
-        draw_text("Game Over!",380.0, 150.0, 50.0, RED);
+        draw_text("Game Over!", 380.0, 150.0, 50.0, RED);
         self.quit_button.draw();
     }
 }
@@ -68,9 +75,14 @@ impl Gamestate for InGame {
 
             if self.obstacle_manager.has_air_obstacle() {
                 sound.play(Cues::SfxUfo);
+            } else {
+                sound.stop(Cues::SfxUfo);
             }
 
-            if self.santa.check_for_collisions(self.obstacle_manager.get_obstacle_rects()) {
+            if self
+                .santa
+                .check_for_collisions(self.obstacle_manager.get_obstacle_rects())
+            {
                 sound.play(Cues::SfxCrash);
                 self.game_over = true;
             }
@@ -79,7 +91,7 @@ impl Gamestate for InGame {
 
             if self.quit_button.was_pressed() {
                 sound.play(Cues::SfxClick);
-                return Some(CurrentGameState::Quit)
+                return Some(CurrentGameState::Quit);
             }
         }
 
@@ -87,15 +99,18 @@ impl Gamestate for InGame {
     }
 
     fn draw(&mut self) {
-
-        let mut camera =
-            Camera2D::from_display_rect(Rect::new(0.0, 0.0, GAME_SIZE_X as f32, GAME_SIZE_Y as f32));
+        let mut camera = Camera2D::from_display_rect(Rect::new(
+            0.0,
+            0.0,
+            GAME_SIZE_X as f32,
+            GAME_SIZE_Y as f32,
+        ));
 
         camera.render_target = Some(render_target(GAME_SIZE_X, GAME_SIZE_Y));
 
         set_camera(&camera);
-        
-        // DRAW!        
+
+        // DRAW!
         self.background.draw();
         self.obstacle_manager.draw();
         self.santa.draw();
