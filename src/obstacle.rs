@@ -221,7 +221,7 @@ impl ObstacleManager {
                     GAME_SIZE_X as f32 + 32.0,
                     None,
                     Some(resources.get_random_air_obstacle()),
-                    Vec2::new(44.0, 60.0),
+                    Vec2::new(44.0, 32.0),
                     Vec2::new(10.0, 2.0),
                 );
             }
@@ -274,8 +274,8 @@ impl ObstacleManager {
         //TODO: PUT THE AIR TEXTURE IN CORRECT COORDINTAES - maybe use a y range to spawn at slightly random locations
         if let Some(air_texture) = air_texture {
             self.air_obstacles.push(Obstacle::new(
-                // vec2(x_pos, gen_range(OBSTACLE_HEIGHT_AIR as f32 * 1.5, GAME_SIZE_Y as f32 / 2.0)),
-                vec2(x_pos, 0.0),
+                vec2(x_pos, gen_range(0.0, GAME_SIZE_Y as f32 / 2.0)),
+                // vec2(x_pos, 0.0),
                 Some(MAX_OBSTACLE_SPEED),
                 air_texture,
                 dims,
