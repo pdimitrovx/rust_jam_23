@@ -1,3 +1,4 @@
+use macroquad::experimental::animation::{AnimatedSprite, Animation};
 use macroquad::prelude::*;
 
 use crate::constants::*;
@@ -5,7 +6,11 @@ use crate::gamestate::{Gamestate, CurrentGameState};
 use crate::button::Button;
 use crate::resources::RESOURCES;
 
+const TITLE_WIDTH: u32 = 128;
+const TITLE_HEIGHT: u32 = 64;
+
 pub struct MainMenu {
+    title: AnimatedSprite,
     play_button: Button,
     quit_button: Button,
 }
@@ -17,6 +22,17 @@ impl MainMenu {
         MainMenu {
             play_button: Button::new(Vec2::new(button_pos_x, button_offset_y), RESOURCES.get().unwrap().play_button_spritesheet_texture.clone()),
             quit_button: Button::new(Vec2::new(button_pos_x, button_offset_y + BUTTON_TEXTURE_HEIGHT as f32), RESOURCES.get().unwrap().quit_button_spritesheet_texture.clone()),
+            title: AnimatedSprite::new(
+                TITLE_WIDTH,
+                TITLE_HEIGHT,
+                &[Animation {
+                    name: "idle".to_string(),
+                    row: 0,
+                    frames: 7,
+                    fps: 12,
+                }],
+                true,
+            ),
         }
     }
 }
@@ -55,6 +71,20 @@ impl Gamestate for MainMenu {
         
         self.play_button.draw();
         self.quit_button.draw();
+
+
+        draw_texture_ex(
+            &RESOURCES.get().unwrap().title,
+            GAME_SIZE_X as f32 / 2.0 - (TITLE_WIDTH as f32 / 2.0),
+            0.0,
+            WHITE,
+            DrawTextureParams {
+                source: Some(self.title.frame().source_rect),
+                dest_size: Some(self.title.frame().dest_size),
+                ..Default::default()
+            }
+        );
+        self.title.update();
 
         set_default_camera();
         clear_background(BLACK);

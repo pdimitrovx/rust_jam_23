@@ -17,6 +17,7 @@ pub struct Resources {
     pub background_texture: Texture2D,
     pub play_button_spritesheet_texture: Texture2D,
     pub quit_button_spritesheet_texture: Texture2D,
+    pub title: Texture2D,
 }
 
 pub async fn init_resources() {
@@ -45,6 +46,7 @@ impl Resources {
                 .unwrap(),
             play_button_spritesheet_texture: load_texture("res/play_button.png").await.unwrap(),
             quit_button_spritesheet_texture: load_texture("res/quit_button.png").await.unwrap(),
+            title: load_texture("res/title.png").await.unwrap(),
         };
 
         let ground_obstacle_dir_path = Path::new(GROUND_OBSTACLE_PATH);
