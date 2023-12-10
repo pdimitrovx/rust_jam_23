@@ -31,7 +31,13 @@ pub struct Obstacle {
 }
 
 impl Obstacle {
-    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D, dims: Vec2, offsets: Vec2) -> Obstacle {
+    pub fn new(
+        position: Vec2,
+        speed: Option<f32>,
+        texture: Texture2D,
+        dims: Vec2,
+        offsets: Vec2,
+    ) -> Obstacle {
         // pub  fn new(texture_filepath: &str ) -> Obstacle {
         Obstacle {
             pos: position,
@@ -48,12 +54,7 @@ impl Obstacle {
                 true,
             ),
             texture: texture,
-            rect: Rect::new(
-                offsets.x,
-                offsets.y,
-                dims.x,
-                dims.y,
-            ),
+            rect: Rect::new(offsets.x, offsets.y, dims.x, dims.y),
             offsets,
         }
     }
@@ -137,8 +138,18 @@ impl ObstacleManager {
     }
 
     pub fn get_obstacle_rects(&self) -> Vec<Rect> {
-        let mut rects = self.ground_obstacles.iter().map(|obstacle| obstacle.rect).collect::<Vec<Rect>>();
-        rects.append(&mut self.air_obstacles.iter().map(|obstacle| obstacle.rect).collect::<Vec<Rect>>());
+        let mut rects = self
+            .ground_obstacles
+            .iter()
+            .map(|obstacle| obstacle.rect)
+            .collect::<Vec<Rect>>();
+        rects.append(
+            &mut self
+                .air_obstacles
+                .iter()
+                .map(|obstacle| obstacle.rect)
+                .collect::<Vec<Rect>>(),
+        );
         rects
     }
 
@@ -162,7 +173,7 @@ impl ObstacleManager {
 
         // Remove Air obstacles beyond the screen
         self.air_obstacles.retain(|obstacle| {
-            let remove = (obstacle.pos.x + OBSTACLE_WIDTH_GROUND as f32) > 0.0;
+            let remove: bool = (obstacle.pos.x + OBSTACLE_WIDTH_GROUND as f32) > 0.0;
             if !remove {
                 self.number_of_cleared += 3; //Triple score increase
             }
@@ -229,16 +240,20 @@ impl ObstacleManager {
         self.number_of_cleared
     }
 
+    pub fn has_air_obstacle(&self) -> bool {
+        !self.air_obstacles.is_empty()
+    }
+
     pub fn draw(&mut self) {
         self.ground_obstacles
-        .iter_mut()
-        .for_each(|obstacle| obstacle.draw());
-    
+            .iter_mut()
+            .for_each(|obstacle| obstacle.draw());
+
         self.air_obstacles
-        .iter_mut()
-        .for_each(|obstacle: &mut Obstacle| obstacle.draw());
+            .iter_mut()
+            .for_each(|obstacle: &mut Obstacle| obstacle.draw());
     }
-        
+
     fn add_obstacle(
         &mut self,
         x_pos: f32,

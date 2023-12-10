@@ -34,7 +34,7 @@ fn window_conf() -> Conf {
 async fn main() {
     init_resources().await;
 
-    let sound = sound_engine::SoundEngine::new().await;
+    let mut sound = sound_engine::SoundEngine::new().await;
 
     let mut ingame = InGame::new();
     let mut main_menu = MainMenu::new();
@@ -43,14 +43,13 @@ async fn main() {
     sound.play(sound_engine::Cues::MusicMenu);
 
     loop {
-        if let Some(next_gamestate) = current_gamestate.update(&sound) {
-            sound.stop(sound_engine::Cues::MusicMenu);
+        if let Some(next_gamestate) = current_gamestate.update(&mut sound) {
             match next_gamestate {
                 CurrentGameState::Quit => break,
                 CurrentGameState::InGame => current_gamestate = &mut ingame,
             }
 
-            current_gamestate.init();
+            current_gamestate.init(&mut sound);
             continue;
         }
 

@@ -16,6 +16,7 @@ pub struct SoundEngine {
     sfx_crash: Sound,
     sfx_ufo: Sound,
     sfx_click: Sound,
+    ufo_cue: bool,
 }
 
 impl SoundEngine {
@@ -32,17 +33,18 @@ impl SoundEngine {
             sfx_crash,
             sfx_ufo,
             sfx_click,
+            ufo_cue: false,
         }
     }
 
-    pub fn play(&self, cue: Cues) {
+    pub fn play(&mut self, cue: Cues) {
         match cue {
             Cues::MusicMenu => {
                 play_sound(
                     &self.music_menu,
                     PlaySoundParams {
                         looped: true,
-                        volume: 0.0,
+                        volume: 0.9,
                     },
                 );
             }
@@ -51,17 +53,28 @@ impl SoundEngine {
                     &self.music_game,
                     PlaySoundParams {
                         looped: true,
-                        volume: 1.0,
+                        volume: 0.9,
                     },
                 );
             }
             Cues::SfxCrash => play_sound_once(&self.sfx_crash),
-            Cues::SfxUfo => play_sound_once(&self.sfx_ufo),
+            Cues::SfxUfo => {
+                if !self.ufo_cue {
+                    self.ufo_cue = true;
+                    play_sound(
+                        &self.sfx_ufo,
+                        PlaySoundParams {
+                            looped: true,
+                            volume: 0.9,
+                        },
+                    );
+                }
+            }
             Cues::SfxClick => play_sound_once(&self.sfx_click),
         }
     }
 
-    pub fn stop(&self, cue: Cues) {
+    pub fn stop(&mut self, cue: Cues) {
         match cue {
             Cues::MusicMenu => {
                 stop_sound(&self.music_menu);
@@ -73,6 +86,7 @@ impl SoundEngine {
                 stop_sound(&self.sfx_crash);
             }
             Cues::SfxUfo => {
+                self.ufo_cue = false;
                 stop_sound(&self.sfx_ufo);
             }
             Cues::SfxClick => {

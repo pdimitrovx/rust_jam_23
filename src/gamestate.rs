@@ -7,7 +7,7 @@ pub enum CurrentGameState {
 }
 
 pub trait Gamestate {
-    fn init(&mut self);
-    fn update(&mut self, sound: &SoundEngine) -> Option<CurrentGameState>;
+    fn init(&mut self, sound: &mut SoundEngine);
+    fn update(&mut self, sound: &mut SoundEngine) -> Option<CurrentGameState>;
     fn draw(&mut self);
 }

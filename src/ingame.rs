@@ -1,4 +1,4 @@
-use crate::constants::*;
+use crate::{constants::*, sound_engine};
 use crate::gamestate::{Gamestate, CurrentGameState};
 use crate::obstacle::ObstacleManager;
 use crate::resources::RESOURCES;
@@ -49,12 +49,14 @@ impl InGame {
 }
 
 impl Gamestate for InGame {
-    fn init(&mut self) {
+    fn init(&mut self, sound: &mut SoundEngine) {
+        sound.play(sound_engine::Cues::MusicGame);
+        sound.stop(sound_engine::Cues::MusicMenu);
         self.obstacle_manager = ObstacleManager::new();
         self.santa = Santa::new();
     }
 
-    fn update(&mut self, sound: &SoundEngine) -> Option<CurrentGameState> {
+    fn update(&mut self, sound: &mut SoundEngine) -> Option<CurrentGameState> {
         if is_key_down(KeyCode::Escape) {
             return Some(CurrentGameState::Quit);
         }
@@ -64,7 +66,12 @@ impl Gamestate for InGame {
             self.santa.update();
             self.background.update();
 
+            if self.obstacle_manager.has_air_obstacle() {
+                sound.play(Cues::SfxUfo);
+            }
+
             if self.santa.check_for_collisions(self.obstacle_manager.get_obstacle_rects()) {
+                sound.play(Cues::SfxCrash);
                 self.game_over = true;
             }
         } else {
