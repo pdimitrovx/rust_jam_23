@@ -141,8 +141,18 @@ impl ObstacleManager {
     }
 
     pub fn get_obstacle_rects(&self) -> Vec<Rect> {
-        let mut rects = self.ground_obstacles.iter().map(|obstacle| obstacle.rect).collect::<Vec<Rect>>();
-        rects.append(&mut self.air_obstacles.iter().map(|obstacle| obstacle.rect).collect::<Vec<Rect>>());
+        let mut rects = self
+            .ground_obstacles
+            .iter()
+            .map(|obstacle| obstacle.rect)
+            .collect::<Vec<Rect>>();
+        rects.append(
+            &mut self
+                .air_obstacles
+                .iter()
+                .map(|obstacle| obstacle.rect)
+                .collect::<Vec<Rect>>(),
+        );
         rects
     }
 
@@ -233,16 +243,20 @@ impl ObstacleManager {
         self.number_of_cleared
     }
 
+    pub fn has_air_obstacle(&self) -> bool {
+        !self.air_obstacles.is_empty()
+    }
+
     pub fn draw(&mut self) {
         self.ground_obstacles
-        .iter_mut()
-        .for_each(|obstacle| obstacle.draw());
-    
+            .iter_mut()
+            .for_each(|obstacle| obstacle.draw());
+
         self.air_obstacles
-        .iter_mut()
-        .for_each(|obstacle: &mut Obstacle| obstacle.draw());
+            .iter_mut()
+            .for_each(|obstacle: &mut Obstacle| obstacle.draw());
     }
-        
+
     fn add_obstacle(
         &mut self,
         x_pos: f32,
