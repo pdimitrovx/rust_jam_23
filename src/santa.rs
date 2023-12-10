@@ -1,6 +1,6 @@
-use macroquad::{prelude::*, experimental::animation::Animation};
-use macroquad::math::Vec2;
 use macroquad::experimental::animation::AnimatedSprite;
+use macroquad::math::Vec2;
+use macroquad::{experimental::animation::Animation, prelude::*};
 
 use crate::constants::*;
 use crate::resources::RESOURCES;
@@ -46,7 +46,7 @@ impl Santa {
                 false
             }
         })
-        }
+    }
 
     pub fn update(&mut self) {
         if is_key_down(KeyCode::W) {
@@ -93,14 +93,14 @@ impl Santa {
     pub fn draw(&mut self) {
         draw_texture_ex(
             &RESOURCES.get().unwrap().santa_texture,
-            self.pos.x, 
+            self.pos.x,
             self.pos.y,
             WHITE,
             DrawTextureParams {
                 source: Some(self.animated_sprite.frame().source_rect),
                 dest_size: Some(self.animated_sprite.frame().dest_size),
                 ..Default::default()
-            }
+            },
         );
         self.animated_sprite.update();
     }

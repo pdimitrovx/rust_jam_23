@@ -37,13 +37,19 @@ impl Resources {
             ground_obstacles: ground_obstacles,
             air_obstacles: air_obstacles,
             santa_texture: load_texture("res/santa.png").await.unwrap(),
-            background_texture: load_texture("res/background/background-houses-road-590x1800.png").await.unwrap(),
-            background_houses_texture: load_texture("res/background/background-houses-road-270x1800.png")
+            background_texture: load_texture("res/background/background-houses-road-590x1800.png")
                 .await
                 .unwrap(),
-            background_trees_texture: load_texture("res/background/background-snowy-trees-270x1800.png")
-                .await
-                .unwrap(),
+            background_houses_texture: load_texture(
+                "res/background/background-houses-road-270x1800.png",
+            )
+            .await
+            .unwrap(),
+            background_trees_texture: load_texture(
+                "res/background/background-snowy-trees-270x1800.png",
+            )
+            .await
+            .unwrap(),
             play_button_spritesheet_texture: load_texture("res/play_button.png").await.unwrap(),
             quit_button_spritesheet_texture: load_texture("res/quit_button.png").await.unwrap(),
             title: load_texture("res/title.png").await.unwrap(),
@@ -86,8 +92,8 @@ impl Resources {
 
     pub fn get_random_ground_obstacle(&self) -> Texture2D {
         let len = self.ground_obstacles.len();
-        if len > 0 { 
-            let index = macroquad::rand::RandomRange::gen_range(0,len);
+        if len > 0 {
+            let index = macroquad::rand::RandomRange::gen_range(0, len);
             self.ground_obstacles[index].clone()
         } else {
             self.ground_obstacles[0].clone()
@@ -96,8 +102,8 @@ impl Resources {
 
     pub fn get_random_air_obstacle(&self) -> Texture2D {
         let len = self.air_obstacles.len();
-        if len > 0 { 
-            let index = macroquad::rand::RandomRange::gen_range(0,len);
+        if len > 0 {
+            let index = macroquad::rand::RandomRange::gen_range(0, len);
             self.air_obstacles[index].clone()
         } else {
             self.air_obstacles[0].clone()

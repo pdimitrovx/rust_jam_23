@@ -1,7 +1,7 @@
 use crate::background::GameBackground;
 use crate::button::Button;
 use crate::gamestate::{CurrentGameState, Gamestate};
-use crate::obstacle::{ObstacleManager, MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED};
+use crate::obstacle::{ObstacleManager, MAX_OBSTACLE_SPEED, MIN_OBSTACLE_SPEED};
 use crate::resources::RESOURCES;
 use crate::santa::Santa;
 use crate::sound_engine::{Cues, SoundEngine};
@@ -75,7 +75,8 @@ impl Gamestate for InGame {
             self.santa.update();
             self.background.update();
 
-            self.current_speed = MIN_OBSTACLE_SPEED + (self.obstacle_manager.get_num_houses_cleared() as f32 / 100.0);
+            self.current_speed = MIN_OBSTACLE_SPEED
+                + (self.obstacle_manager.get_num_houses_cleared() as f32 / 100.0);
 
             if self.current_speed > MAX_OBSTACLE_SPEED as f32 {
                 self.current_speed = MAX_OBSTACLE_SPEED as f32;
@@ -83,7 +84,6 @@ impl Gamestate for InGame {
 
             self.obstacle_manager.update_speed(self.current_speed);
             self.background.update_speed(self.current_speed);
-
 
             sound.trigger_ho(self.obstacle_manager.get_num_houses_cleared());
 

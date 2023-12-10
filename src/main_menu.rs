@@ -19,7 +19,7 @@ pub struct MainMenu {
 impl MainMenu {
     pub fn new() -> MainMenu {
         let button_pos_x = (GAME_SIZE_X as f32 / 2.0) - (BUTTON_TEXTURE_WIDTH as f32 / 2.0);
-        let button_offset_y = (GAME_SIZE_Y as f32 / 2.0);
+        let button_offset_y = GAME_SIZE_Y as f32 / 2.0;
         MainMenu {
             play_button: Button::new(
                 Vec2::new(button_pos_x, button_offset_y),
@@ -94,7 +94,6 @@ impl Gamestate for MainMenu {
         self.play_button.draw();
         self.quit_button.draw();
 
-
         draw_texture_ex(
             &RESOURCES.get().unwrap().title,
             GAME_SIZE_X as f32 / 2.0 - (TITLE_WIDTH as f32 / 2.0),
@@ -104,7 +103,7 @@ impl Gamestate for MainMenu {
                 source: Some(self.title.frame().source_rect),
                 dest_size: Some(self.title.frame().dest_size),
                 ..Default::default()
-            }
+            },
         );
         self.title.update();
 
