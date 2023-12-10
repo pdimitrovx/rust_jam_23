@@ -33,13 +33,20 @@ impl Santa {
                 }],
                 true,
             ),
-            rect: Rect::new(SANTA_OFFSET, SANTA_OFFSET, SANTA_WIDTH as f32 - SANTA_OFFSET, SANTA_HEIGHT as f32 - SANTA_OFFSET),
+            rect: Rect::new(SANTA_OFFSET, SANTA_OFFSET, 20.0, 20.0),
         }
     }
 
     pub fn check_for_collisions(&self, obstacles: Vec<Rect>) -> bool {
-        obstacles.iter().any(|obstacle| obstacle.overlaps(&self.rect))
-    }
+        obstacles.iter().any(|obstacle: &Rect| {
+            if obstacle.overlaps(&self.rect) {
+                // println!("Overlap found obstacle, rect(santa), pos(santa), type: {:?} // {:?} // {:?} // {:?} //", obstacle, &self.rect, &self.pos, &self.vel);
+                true
+            } else {
+                false
+            }
+        })
+        }
 
     pub fn update(&mut self) {
         if is_key_down(KeyCode::W) {

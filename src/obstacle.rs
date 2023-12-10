@@ -10,14 +10,17 @@ use crate::resources::RESOURCES;
 
 pub const MIN_OBSTACLE_SPEED: f32 = 1.5;
 pub const MAX_OBSTACLE_SPEED: f32 = 4.0;
-pub const OBSTACLE_WIDTH_GROUND: i32 = 64;
-pub const OBSTACLE_HEIGHT_GROUND: i32 = 64; //
+pub const OBSTACLE_WIDTH_GROUND: i32 = 96;
+pub const OBSTACLE_HEIGHT_GROUND: i32 = 96; //
 pub const OBSTACLE_WIDTH_AIR: i32 = 64;
-pub const OBSTACLE_HEIGHT_AIR: i32 = 32; //
+pub const OBSTACLE_HEIGHT_AIR: i32 = 40; //
+pub const GROUND_OBSTACLE_FRAME_COUNT: u32 = 8; //
+pub const AIR_OBSTACLE_FRAME_COUNT: u32 = 17; //
+
 pub const STARTING_NUMBER_OF_OBSTACLES: usize = 2;
 pub const MIN_HORIZONTAL_SPACE_BETWEEN_OBSTACLES: f32 = 64.0;
 
-pub const AIR_OBSTACLE_SPAWN_TIMEOUT_SECS: u64 = 2;
+pub const AIR_OBSTACLE_SPAWN_TIMEOUT_SECS: u64 = 1;
 
 #[derive(Clone)]
 pub struct Obstacle {
@@ -31,30 +34,29 @@ pub struct Obstacle {
 }
 
 impl Obstacle {
-    pub fn new(
-        position: Vec2,
-        speed: Option<f32>,
-        texture: Texture2D,
-        dims: Vec2,
-        offsets: Vec2,
-    ) -> Obstacle {
+    pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D, dims: Vec2, offsets: Vec2, frames: u32, tile_width: u32, tile_height: u32, ) -> Obstacle {
         // pub  fn new(texture_filepath: &str ) -> Obstacle {
         Obstacle {
             pos: position,
             speed: speed.unwrap_or(MIN_OBSTACLE_SPEED),
             animated_sprite: AnimatedSprite::new(
-                OBSTACLE_WIDTH_GROUND as u32,
-                OBSTACLE_HEIGHT_GROUND as u32,
+                tile_width,
+                tile_height,
                 &[Animation {
                     name: "idle".to_string(),
                     row: 0,
-                    frames: 8,
+                    frames: frames,
                     fps: 12,
                 }],
                 true,
             ),
             texture: texture,
-            rect: Rect::new(offsets.x, offsets.y, dims.x, dims.y),
+            rect: Rect::new(
+                position.x + offsets.x,
+                position.y + offsets.y,
+                dims.x,
+                dims.y,
+            ),
             offsets,
         }
     }
@@ -102,9 +104,10 @@ impl Obstacle {
 
     fn update(&mut self) {
         self.pos.x -= self.speed;
-
+        
         self.rect.x = self.pos.x + self.offsets.x;
         self.rect.y = self.pos.y + self.offsets.y;
+        // println!("pos: {:?}, rect{:?}", self.pos, self.rect);
     }
 }
 
@@ -173,7 +176,7 @@ impl ObstacleManager {
 
         // Remove Air obstacles beyond the screen
         self.air_obstacles.retain(|obstacle| {
-            let remove: bool = (obstacle.pos.x + OBSTACLE_WIDTH_GROUND as f32) > 0.0;
+            let remove = (obstacle.pos.x + OBSTACLE_WIDTH_AIR as f32) > 0.0;
             if !remove {
                 self.number_of_cleared += 3; //Triple score increase
             }
@@ -229,7 +232,7 @@ impl ObstacleManager {
                     None,
                     Some(resources.get_random_air_obstacle()),
                     Vec2::new(44.0, 60.0),
-                    Vec2::new(10.0, 4.0),
+                    Vec2::new(10.0, 2.0),
                 );
             }
         }
@@ -276,6 +279,9 @@ impl ObstacleManager {
                 ground_texture,
                 dims,
                 offsets,
+                GROUND_OBSTACLE_FRAME_COUNT,
+                OBSTACLE_WIDTH_GROUND as u32,
+                OBSTACLE_HEIGHT_GROUND as u32,
             ));
         }
 
@@ -288,6 +294,9 @@ impl ObstacleManager {
                 air_texture,
                 dims,
                 offsets,
+                AIR_OBSTACLE_FRAME_COUNT,
+                OBSTACLE_WIDTH_AIR as u32,
+                OBSTACLE_HEIGHT_AIR as u32,
             ));
         }
     }
