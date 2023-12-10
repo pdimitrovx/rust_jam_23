@@ -7,23 +7,29 @@ pub struct GameBackground {
     houses_position2: f32,
     trees_position1: f32,
     trees_position2: f32,
+    speed: f32,
 }
 
 impl GameBackground {
-    pub fn new() -> Self {
+    pub fn new(speed: f32) -> Self {
         Self {
             houses_position1: 0.0,
             houses_position2: BACKGROUND_WIDTH as f32,
             trees_position1: 0.0,
             trees_position2: BACKGROUND_WIDTH as f32,
+            speed,
         }
     }
 
+    pub fn update_speed(&mut self, speed: f32) {
+        self.speed = speed;
+    }
+
     pub fn update(&mut self) {
-        self.houses_position1 -= BACKGROUND_SPEED / 2.0;
-        self.houses_position2 -= BACKGROUND_SPEED / 2.0;
-        self.trees_position1 -= BACKGROUND_SPEED;
-        self.trees_position2 -= BACKGROUND_SPEED;
+        self.houses_position1 -= self.speed / 2.0;
+        self.houses_position2 -= self.speed / 2.0;
+        self.trees_position1 -= self.speed;
+        self.trees_position2 -= self.speed;
 
         if self.houses_position1 <= -3.75 * GAME_SIZE_X as f32 {
             self.houses_position1 = GAME_SIZE_X as f32 - 0.0;

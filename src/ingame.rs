@@ -1,7 +1,7 @@
 use crate::background::GameBackground;
 use crate::button::Button;
 use crate::gamestate::{CurrentGameState, Gamestate};
-use crate::obstacle::ObstacleManager;
+use crate::obstacle::{ObstacleManager, MIN_OBSTACLE_SPEED, MAX_OBSTACLE_SPEED};
 use crate::resources::RESOURCES;
 use crate::santa::Santa;
 use crate::sound_engine::{Cues, SoundEngine};
@@ -16,6 +16,7 @@ pub struct InGame {
     santa: Santa,
     game_over: bool,
     quit_button: Button,
+    current_speed: f32,
 }
 
 impl InGame {
@@ -23,7 +24,7 @@ impl InGame {
         let button_pos_x = (WINDOW_WIDTH as f32 / 2.0) - (BUTTON_TEXTURE_WIDTH as f32 / 2.0);
         InGame {
             obstacle_manager: ObstacleManager::new(),
-            background: GameBackground::new(),
+            background: GameBackground::new(MIN_OBSTACLE_SPEED),
             santa: Santa::new(),
             game_over: false,
             quit_button: Button::new(
@@ -34,6 +35,7 @@ impl InGame {
                     .quit_button_spritesheet_texture
                     .clone(),
             ),
+            current_speed: MIN_OBSTACLE_SPEED,
         }
     }
 }
@@ -72,6 +74,16 @@ impl Gamestate for InGame {
             self.obstacle_manager.update();
             self.santa.update();
             self.background.update();
+
+            self.current_speed = MIN_OBSTACLE_SPEED + (self.obstacle_manager.get_num_houses_cleared() as f32 / 100.0);
+
+            if self.current_speed > MAX_OBSTACLE_SPEED as f32 {
+                self.current_speed = MAX_OBSTACLE_SPEED as f32;
+            }
+
+            self.obstacle_manager.update_speed(self.current_speed);
+            self.background.update_speed(self.current_speed);
+
 
             sound.trigger_ho(self.obstacle_manager.get_num_houses_cleared());
 
