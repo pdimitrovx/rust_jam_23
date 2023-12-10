@@ -34,6 +34,10 @@ pub struct Obstacle {
 }
 
 impl Obstacle {
+    pub fn set_speed(&mut self, speed: f32) {
+        self.speed = speed;
+    }
+
     pub fn new(position: Vec2, speed: Option<f32>, texture: Texture2D, dims: Vec2, offsets: Vec2, frames: u32, tile_width: u32, tile_height: u32, ) -> Obstacle {
         // pub  fn new(texture_filepath: &str ) -> Obstacle {
         Obstacle {
@@ -117,6 +121,7 @@ pub struct ObstacleManager {
     // increment for each obstacle that goes past, ie score
     number_of_cleared: u32,
     start_time: Instant,
+    current_speed: f32,
 }
 impl ObstacleManager {
     pub fn new() -> Self {
@@ -125,6 +130,7 @@ impl ObstacleManager {
             air_obstacles: Vec::new(),
             number_of_cleared: 0,
             start_time: Instant::now(),
+            current_speed: MIN_OBSTACLE_SPEED,
         };
 
         let resources = RESOURCES.get().unwrap();
@@ -154,6 +160,14 @@ impl ObstacleManager {
                 .collect::<Vec<Rect>>(),
         );
         rects
+    }
+
+    pub fn update_speed(&mut self, speed: f32) {
+        self.current_speed = speed;
+
+        for obstacle in self.ground_obstacles.iter_mut() {
+            obstacle.set_speed(speed);
+        }
     }
 
     pub fn update(&mut self) {
@@ -275,7 +289,7 @@ impl ObstacleManager {
                     x_pos,
                     GAME_SIZE_Y as f32 - OBSTACLE_HEIGHT_GROUND as f32 * gen_range(1.09, 1.81),
                 ), //1.8 max 1.1 min
-                None,
+                Some(self.current_speed),
                 ground_texture,
                 dims,
                 offsets,
