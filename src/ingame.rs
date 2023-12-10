@@ -5,6 +5,7 @@ use crate::resources::RESOURCES;
 use crate::santa::Santa;
 use crate::background::GameBackground;
 use crate::button::Button;
+use crate::sound_engine::{SoundEngine, Cues};
 
 use macroquad::prelude::*;
 // use macroquad::rand::gen_range;
@@ -53,7 +54,7 @@ impl Gamestate for InGame {
         self.santa = Santa::new();
     }
 
-    fn update(&mut self) -> Option<CurrentGameState> {
+    fn update(&mut self, sound: &SoundEngine) -> Option<CurrentGameState> {
         if is_key_down(KeyCode::Escape) {
             return Some(CurrentGameState::Quit);
         }
@@ -70,6 +71,7 @@ impl Gamestate for InGame {
             self.quit_button.update();
 
             if self.quit_button.was_pressed() {
+                sound.play(Cues::SfxClick);
                 return Some(CurrentGameState::Quit)
             }
         }

@@ -43,7 +43,7 @@ async fn main() {
     sound.play(sound_engine::Cues::MusicMenu);
 
     loop {
-        if let Some(next_gamestate) = current_gamestate.update() {
+        if let Some(next_gamestate) = current_gamestate.update(&sound) {
             sound.stop(sound_engine::Cues::MusicMenu);
             match next_gamestate {
                 CurrentGameState::Quit => break,

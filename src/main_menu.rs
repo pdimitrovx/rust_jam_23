@@ -4,6 +4,7 @@ use crate::constants::*;
 use crate::gamestate::{Gamestate, CurrentGameState};
 use crate::button::Button;
 use crate::resources::RESOURCES;
+use crate::sound_engine::SoundEngine;
 
 pub struct MainMenu {
     play_button: Button,
@@ -25,7 +26,7 @@ impl Gamestate for MainMenu {
     fn init(&mut self) {
     }
 
-    fn update(&mut self) -> Option<CurrentGameState> {
+    fn update(&mut self, sound: &SoundEngine) -> Option<CurrentGameState> {
         if is_key_down(KeyCode::Escape) {
             return Some(CurrentGameState::Quit);
         }
